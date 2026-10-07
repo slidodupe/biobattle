@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>BioBattle</title>
+
+  <style>
+    :root {
+      --donker: #132a20;
+      --groen: #28c76f;
+      --groen-donker: #0c8744;
+      --rood: #ef476f;
+      --blauw: #4cc9f0;
+      --paars: #8b5cf6;
+      --wit: #fff;
+      --schaduw: 0 12px 30px rgba(19, 42, 32, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--donker);
+      background:
+        radial-gradient(circle at 10% 10%, #d7ffd9, transparent 28%),
+        radial-gradient(circle at 90% 20%, #caf0ff, transparent 25%),
+        linear-gradient(135deg, #effff4, #eaf6ff);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: default;
+    }
+
+    .verborgen {
+      display: none !important;
+    }
+
+    .app {
+      width: min(1050px, 94%);
+      margin: auto;
+      padding: 25px 0 50px;
+    }
+
+    .bovenbalk {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      margin: 0;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+    }
+
+    .logo span {
+      color: var(--groen);
+    }
+
+    .rechts {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topscore {
+      padding: 11px 17px;
+      color: white;
+      font-weight: 800;
+      background: var(--paars);
+      border-radius: 999px;
+      box-shadow: var(--schaduw);
+    }
+
+    .scherm {
+      animation: verschijnen 0.3s ease;
+    }
+
+    @keyframes verschijnen {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .kaart {
+      padding: clamp(22px, 5vw, 42px);
+      background: rgba(255, 255, 255, 0.97);
+      border: 3px solid white;
+      border-radius: 28px;
+      box-shadow: var(--schaduw);
+    }
+
+    .intro,
+    .eindkaart {
+      text-align: center;
+    }
+
+    .intro-icoon {
+      display: grid;
+      width: 105px;
+      height: 105px;
+      margin: 0 auto 16px;
+      place-items: center;
+      font-size: 60px;
+      background: #b9fbc0;
+      border-radius: 30px;
+      transform: rotate(-5deg);
+    }
+
+    .intro h2 {
+      margin: 8px 0;
+      font-size: clamp(1.7rem, 4vw, 2.5rem);
+    }
+
+    .intro p {
+      max-width: 700px;
+      margin: 8px auto 24px;
+      color: #466354;
+      line-height: 1.6;
+    }
+
+    .instellingen {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      max-width: 800px;
+      margin: 0 auto 25px;
+      text-align: left;
+    }
+
+    label {
+      font-weight: 800;
+    }
+
+    input,
+    select {
+      width: 100%;
+      margin-top: 7px;
+      padding: 13px;
+      color: var(--donker);
+      background: #f7fff9;
+      border: 2px solid #ccebd5;
+      border-radius: 13px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--groen);
+    }
+
+    .hoofdknop,
+    .tweede-knop {
+      padding: 13px 21px;
+      font-weight: 900;
+      border-radius: 14px;
+      transition: 0.15s;
+    }
+
+    .hoofdknop {
+      color: white;
+      background: linear-gradient(135deg, var(--groen), #17a65a);
+      border: 0;
+      box-shadow: 0 7px 0 var(--groen-donker);
+    }
+
+    .hoofdknop:hover {
+      transform: translateY(-2px);
+    }
+
+    .hoofdknop:active {
+      transform: translateY(4px);
+      box-shadow: 0 3px 0 var(--groen-donker);
+    }
+
+    .tweede-knop {
+      color: var(--donker);
+      background: white;
+      border: 2px solid #bdd8c6;
+    }
+
+    .knoppenrij {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 13px;
+    }
+
+    .spelstatus {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .statusvak {
+      padding: 12px;
+      text-align: center;
+      font-weight: 900;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 7px 17px rgba(19, 42, 32, 0.09);
+    }
+
+    .statusvak small {
+      display: block;
+      margin-bottom: 4px;
+      color: #688174;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+    }
+
+    .voortgang {
+      height: 15px;
+      margin-bottom: 18px;
+      overflow: hidden;
+      background: #dcefe2;
+      border-radius: 999px;
+    }
+
+    .voortgang-balk {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--groen), var(--blauw));
+      transition: width 0.3s;
+    }
+
+    .categorie {
+      display: inline-block;
+      padding: 7px 12px;
+      color: #09683b;
+      font-size: 0.84rem;
+      font-weight: 900;
+      background: #d9ffe8;
+      border-radius: 999px;
+    }
+
+    #vraagTekst {
+      margin: 20px 0 15px;
+      font-size: clamp(1.4rem, 4vw, 2.1rem);
+      line-height: 1.3;
+    }
+
+    .vraag-acties {
+      margin-bottom: 20px;
+    }
+
+    .antwoorden {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .antwoord {
+      min-height: 82px;
+      padding: 17px;
+      color: var(--donker);
+      font-weight: 800;
+      text-align: left;
+      background: #f8fffa;
+      border: 3px solid #d7ece0;
+      border-radius: 17px;
+      transition: 0.18s;
+    }
+
+    .antwoord:hover:not(:disabled) {
+      border-color: var(--groen);
+      transform: translateY(-3px);
+    }
+
+    .antwoord.goed {
+      color: #075f34;
+      background: #caffdc;
+      border-color: #20b963;
+    }
+
+    .antwoord.fout {
+      color: #841431;
+      background: #ffd3dc;
+      border-color: var(--rood);
+    }
+
+    .feedback {
+      margin-top: 18px;
+      padding: 17px;
+      line-height: 1.5;
+      background: #f2f7ff;
+      border-left: 6px solid var(--blauw);
+      border-radius: 12px;
+    }
+
+    .feedback.goed {
+      background: #e5ffed;
+      border-color: var(--groen);
+    }
+
+    .feedback.fout {
+      background: #fff0f3;
+      border-color: var(--rood);
+    }
+
+    .volgende {
+      display: block;
+      margin: 18px 0 0 auto;
+    }
+
+    .timer-gevaar {
+      color: var(--rood);
+      animation: knipper 0.7s infinite;
+    }
+
+    @keyframes knipper {
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    .trofee {
+      font-size: 80px;
+    }
+
+    .eindscore {
+      display: inline-block;
+      margin: 15px;
+      padding: 18px 32px;
+      color: white;
+      font-size: 2rem;
+      font-weight: 900;
+      background: var(--paars);
+      border-radius: 20px;
+    }
+
+    .statistieken {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 13px;
+      max-width: 650px;
+      margin: 20px auto 27px;
+    }
+
+    .statistiek {
+      padding: 18px;
+      background: #f5fff8;
+      border: 2px solid #d9eee0;
+      border-radius: 16px;
+    }
+
+    .statistiek strong {
+      display: block;
+      font-size: 1.5rem;
+    }
+
+    .flitskaart {
+      min-height: 330px;
+      perspective: 1000px;
+    }
+
+    .flits-binnenkant {
+      position: relative;
+      min-height: 300px;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .flits-binnenkant.omgedraaid {
+      transform: rotateY(180deg);
+    }
+
+    .flits-voor,
+    .flits-achter {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      padding: 25px;
+      text-align: center;
+      place-items: center;
+      border: 4px solid var(--groen);
+      border-radius: 24px;
+      backface-visibility: hidden;
+    }
+
+    .flits-voor {
+      background: white;
+    }
+
+    .flits-achter {
+      color: white;
+      background: linear-gradient(135deg, var(--groen), #118a4c);
+      transform: rotateY(180deg);
+    }
+
+    .flits-term {
+      font-size: clamp(1.6rem, 5vw, 2.6rem);
+      font-weight: 900;
+    }
+
+    .flits-uitleg {
+      font-size: clamp(1.1rem, 3vw, 1.4rem);
+      line-height: 1.5;
+    }
+
+    .flitsbediening {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .melding {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      z-index: 100;
+      padding: 13px 19px;
+      color: white;
+      font-weight: 900;
+      background: var(--donker);
+      border-radius: 999px;
+      transform: translateX(-50%);
+    }
+
+    footer {
+      margin-top: 25px;
+      color: #6d8377;
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      .instellingen,
+      .spelstatus {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .antwoorden,
+      .statistieken {
+        grid-template-columns: 1fr;
+      }
+
+      .bovenbalk {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .instellingen,
+      .spelstatus {
+        grid-template-columns: 1fr;
+      }
+
+      .kaart {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="bovenbalk">
+      <h1 class="logo">Bio<span>Battle</span> 🌱</h1>
+
+      <div class="rechts">
+        <button
+          id="voorleesKnop"
+          class="tweede-knop"
+          onclick="wisselVoorlezen()"
+        >
+          🔊 Voorlezen: aan
+        </button>
+
+        <div class="topscore">
+          🏆 Topscore: <span id="topscore">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- STARTSCHERM -->
+    <section id="startScherm" class="scherm">
+      <div class="kaart intro">
+        <div class="intro-icoon">🧬</div>
+
+        <h2>Planten & dieren</h2>
+
+        <p>
+          Beantwoord de vragen, verdien munten en behoud je levens.
+          De vragen en uitleg kunnen automatisch worden voorgelezen.
+        </p>
+
+        <div class="instellingen">
+          <label>
+            Naam
+            <input
+              id="naam"
+              type="text"
+              maxlength="20"
+              placeholder="Vul je naam in"
+            >
+          </label>
+
+          <label>
+            Aantal vragen
+            <select id="aantalVragen">
+              <option value="10">10 vragen</option>
+              <option value="15">15 vragen</option>
+              <option value="20">20 vragen</option>
+              <option value="999">Alle vragen</option>
+            </select>
+          </label>
+
+          <label>
+            Moeilijkheid
+            <select id="moeilijkheid">
+              <option value="rustig">Rustig – 30 seconden</option>
+              <option value="normaal" selected>
+                Normaal – 20 seconden
+              </option>
+              <option value="snel">Snel – 12 seconden</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="knoppenrij">
+          <button class="hoofdknop" onclick="startQuiz()">
+            ▶ Start quiz
+          </button>
+
+          <button class="tweede-knop" onclick="startFlitskaarten()">
+            🗂️ Flitskaarten
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quizScherm" class="scherm verborgen">
+      <div class="spelstatus">
+        <div class="statusvak">
+          <small>Speler</small>
+          <span id="spelerNaam">Speler</span>
+        </div>
+
+        <div class="statusvak">
+          <small>Vraag</small>
+          <span id="vraagNummer">1/10</span>
+        </div>
+
+        <div class="statusvak">
+          <small>Score</small>
+          ⭐ <span id="score">0</span>
+        </div>
+
+        <div class="statusvak">
+          <small>Munten</small>
+          🪙 <span id="munten">0</span>
+        </div>
+
+        <div class="statusvak">
+          <small>Tijd en levens</small>
+          <span id="timer">20</span>s ·
+          <span id="levens">❤️❤️❤️</span>
+        </div>
+      </div>
+
+      <div class="voortgang">
+        <div id="voortgangBalk" class="voortgang-balk"></div>
+      </div>
+
+      <div class="kaart">
+        <span id="categorie" class="categorie">Biologie</span>
+
+        <h2 id="vraagTekst">Vraag wordt geladen...</h2>
+
+        <div class="vraag-acties">
+          <button
+            class="tweede-knop"
+            onclick="leesHuidigeVraagVoor()"
+          >
+            🔊 Lees opnieuw
+          </button>
+
+          <button
+            class="tweede-knop"
+            onclick="stopVoorlezen()"
+          >
+            ⏹ Stop stem
+          </button>
+        </div>
+
+        <div id="antwoorden" class="antwoorden"></div>
+
+        <div id="feedback" class="feedback verborgen"></div>
+
+        <button
+          id="volgendeKnop"
+          class="hoofdknop volgende verborgen"
+          onclick="volgendeVraag()"
+        >
+          Volgende vraag →
+        </button>
+      </div>
+    </section>
+
+    <!-- EINDSCHERM -->
+    <section id="eindScherm" class="scherm verborgen">
+      <div class="kaart eindkaart">
+        <div id="eindIcoon" class="trofee">🏆</div>
+
+        <h2 id="eindTitel">Goed gespeeld!</h2>
+        <p id="eindTekst"></p>
+
+        <div class="eindscore">
+          <span id="eindScore">0</span> punten
+        </div>
+
+        <div class="statistieken">
+          <div class="statistiek">
+            <strong id="eindGoed">0</strong>
+            Goed
+          </div>
+
+          <div class="statistiek">
+            <strong id="eindFout">0</strong>
+            Fout
+          </div>
+
+          <div class="statistiek">
+            <strong id="eindMunten">0</strong>
+            Munten
+          </div>
+        </div>
+
+        <div class="knoppenrij">
+          <button class="hoofdknop" onclick="startQuiz()">
+            🔄 Opnieuw spelen
+          </button>
+
+          <button class="tweede-knop" onclick="naarStart()">
+            🏠 Startscherm
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FLITSKAARTEN -->
+    <section id="flitsScherm" class="scherm verborgen">
+      <div class="kaart">
+        <div class="bovenbalk">
+          <div>
+            <span class="categorie">Oefenmodus</span>
+            <h2>Flitskaarten</h2>
+          </div>
+
+          <strong id="flitsTeller">1/10</strong>
+        </div>
+
+        <div class="flitskaart" onclick="draaiFlitskaart()">
+          <div id="flitsBinnenkant" class="flits-binnenkant">
+            <div class="flits-voor">
+              <div>
+                <div id="flitsTerm" class="flits-term"></div>
+                <p>Klik om het antwoord te bekijken.</p>
+              </div>
+            </div>
+
+            <div class="flits-achter">
+              <div id="flitsUitleg" class="flits-uitleg"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flitsbediening">
+          <button class="tweede-knop" onclick="vorigeFlitskaart()">
+            ← Vorige
+          </button>
+
+          <button class="tweede-knop" onclick="leesFlitskaartVoor()">
+            🔊 Voorlezen
+          </button>
+
+          <button class="hoofdknop" onclick="volgendeFlitskaart()">
+            Volgende →
+          </button>
+        </div>
+
+        <div class="knoppenrij" style="margin-top: 20px">
+          <button class="tweede-knop" onclick="naarStart()">
+            🏠 Stoppen
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <footer>BioBattle – interactief biologieleerspel</footer>
+  </main>
+
+  <script>
+    /*
+    ==========================================================
+    VRAGEN
+    Voeg volgens hetzelfde formaat zelf extra vragen toe.
+    ==========================================================
+    */
+
+    const alleVragen = [
+      {
+        categorie: "Organismen",
+        vraag: "Wat is een organisme?",
+        antwoorden: [
+          "Een levend wezen",
+          "Alleen een dier",
+          "Een levenloos voorwerp",
+          "Alleen een plant"
+        ],
+        goed: 0,
+        uitleg:
+          "Een organisme is een levend wezen. Mensen, dieren, planten, schimmels en bacteriën zijn organismen."
+      },
+      {
+        categorie: "Levenskenmerken",
+        vraag: "Welke activiteit is een levenskenmerk?",
+        antwoorden: [
+          "Roesten",
+          "Voortplanten",
+          "Smelten",
+          "Verdampen"
+        ],
+        goed: 1,
+        uitleg:
+          "Voortplanting is een levenskenmerk. Andere levenskenmerken zijn groeien, ontwikkelen en reageren."
+      },
+      {
+        categorie: "Levenskenmerken",
+        vraag: "Wanneer noemen we iets levenloos?",
+        antwoorden: [
+          "Als het niet beweegt",
+          "Als het dood is",
+          "Als het nooit heeft geleefd",
+          "Als het klein is"
+        ],
+        goed: 2,
+        uitleg:
+          "Iets levenloos heeft nooit geleefd. Een steen is bijvoorbeeld levenloos."
+      },
+      {
+        categorie: "Groei",
+        vraag: "Wat gebeurt er bij groei?",
+        antwoorden: [
+          "Een organisme wordt groter en zwaarder",
+          "Een organisme verandert altijd van soort",
+          "Een organisme wordt levenloos",
+          "Een organisme stopt met ontwikkelen"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij groei nemen de afmetingen en meestal ook het gewicht van een organisme toe."
+      },
+      {
+        categorie: "Ontwikkeling",
+        vraag: "Wat betekent ontwikkeling?",
+        antwoorden: [
+          "Alleen langer worden",
+          "Veranderingen in de bouw en mogelijkheden",
+          "Alleen zwaarder worden",
+          "Stoppen met groeien"
+        ],
+        goed: 1,
+        uitleg:
+          "Ontwikkeling bestaat uit veranderingen in de bouw, vorm en mogelijkheden van een organisme."
+      },
+      {
+        categorie: "Levenscyclus",
+        vraag: "Wat is een levenscyclus?",
+        antwoorden: [
+          "De fasen die een organisme tijdens zijn leven doorloopt",
+          "Alleen de groei van een plant",
+          "De beweging van een organisme",
+          "Een voedselketen"
+        ],
+        goed: 0,
+        uitleg:
+          "Een levenscyclus bestaat uit de opeenvolgende fasen die een organisme tijdens zijn leven doorloopt."
+      },
+      {
+        categorie: "Planten",
+        vraag: "Wat is kieming?",
+        antwoorden: [
+          "Het maken van bloemen",
+          "De ontwikkeling van een kiem tot een kiemplant",
+          "Het verspreiden van vruchten",
+          "Het afsterven van een zaad"
+        ],
+        goed: 1,
+        uitleg:
+          "Bij kieming groeit de kiem in het zaad uit tot een kiemplant."
+      },
+      {
+        categorie: "Planten",
+        vraag: "Wat is meestal nodig voor kieming?",
+        antwoorden: [
+          "Water, zuurstof en een geschikte temperatuur",
+          "Alleen zonlicht",
+          "Zout, wind en kunstmest",
+          "Alleen aarde"
+        ],
+        goed: 0,
+        uitleg:
+          "Voor kieming zijn meestal water, zuurstof en een geschikte temperatuur nodig."
+      },
+      {
+        categorie: "Fotosynthese",
+        vraag: "Welke stoffen gebruikt een plant bij fotosynthese?",
+        antwoorden: [
+          "Glucose en zuurstof",
+          "Water en koolstofdioxide",
+          "Zuurstof en mineralen",
+          "Glucose en water"
+        ],
+        goed: 1,
+        uitleg:
+          "Bij fotosynthese gebruikt een plant water en koolstofdioxide."
+      },
+      {
+        categorie: "Fotosynthese",
+        vraag: "Welke stoffen ontstaan bij fotosynthese?",
+        antwoorden: [
+          "Water en koolstofdioxide",
+          "Glucose en zuurstof",
+          "Alleen zuurstof",
+          "Eiwitten en vetten"
+        ],
+        goed: 1,
+        uitleg:
+          "Bij fotosynthese ontstaan glucose en zuurstof."
+      },
+      {
+        categorie: "Fotosynthese",
+        vraag: "Welke energiebron is nodig voor fotosynthese?",
+        antwoorden: [
+          "Geluidsenergie",
+          "Lichtenergie",
+          "Bewegingsenergie",
+          "Warmte uit de bodem"
+        ],
+        goed: 1,
+        uitleg:
+          "Planten gebruiken lichtenergie voor fotosynthese."
+      },
+      {
+        categorie: "Planten",
+        vraag: "Wat is een belangrijke functie van wortels?",
+        antwoorden: [
+          "Water en mineralen opnemen",
+          "Stuifmeel verspreiden",
+          "Bloemen openen",
+          "Zuurstof maken zonder licht"
+        ],
+        goed: 0,
+        uitleg:
+          "Wortels nemen water en mineralen op en zetten de plant stevig vast."
+      },
+      {
+        categorie: "Voortplanting",
+        vraag: "Wat is bestuiving?",
+        antwoorden: [
+          "Het versmelten van een eicel en zaadcel",
+          "Het overbrengen van stuifmeel op een stempel",
+          "Het ontstaan van een vrucht",
+          "Het kiemen van een zaad"
+        ],
+        goed: 1,
+        uitleg:
+          "Bestuiving is het overbrengen van stuifmeel naar een stempel van dezelfde plantensoort."
+      },
+      {
+        categorie: "Voortplanting",
+        vraag: "Wat is bevruchting?",
+        antwoorden: [
+          "Het versmelten van de kern van een zaadcel en eicel",
+          "Het verspreiden van zaden",
+          "Het openen van een bloem",
+          "Het vervoeren van stuifmeel"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij bevruchting versmelten de kernen van een zaadcel en een eicel."
+      },
+      {
+        categorie: "Dieren",
+        vraag: "Wat is metamorfose?",
+        antwoorden: [
+          "Een sterke verandering van lichaamsbouw",
+          "Een dagelijkse verplaatsing",
+          "Het eten van ander voedsel",
+          "Groei zonder verandering"
+        ],
+        goed: 0,
+        uitleg:
+          "Metamorfose is een duidelijke verandering van lichaamsbouw tijdens de ontwikkeling."
+      },
+      {
+        categorie: "Dieren",
+        vraag: "Welke volgorde hoort bij een vlinder?",
+        antwoorden: [
+          "Ei, rups, pop, vlinder",
+          "Ei, pop, rups, vlinder",
+          "Rups, ei, vlinder, pop",
+          "Ei, vlinder, pop, rups"
+        ],
+        goed: 0,
+        uitleg:
+          "Een vlinder ontwikkelt zich van ei via rups en pop tot volwassen vlinder."
+      },
+      {
+        categorie: "Dieren",
+        vraag: "Hoe heet de larve van een kikker?",
+        antwoorden: [
+          "Rups",
+          "Kikkervisje",
+          "Nimf",
+          "Pop"
+        ],
+        goed: 1,
+        uitleg:
+          "De larve van een kikker heet een kikkervisje of dikkopje."
+      },
+      {
+        categorie: "Aanpassingen",
+        vraag: "Wat is camouflage?",
+        antwoorden: [
+          "Een aanpassing waardoor een organisme minder opvalt",
+          "Het maken van geluid",
+          "Het wisselen van voedsel",
+          "Het afleggen van grote afstanden"
+        ],
+        goed: 0,
+        uitleg:
+          "Door camouflage valt een organisme minder op voor prooidieren of vijanden."
+      },
+      {
+        categorie: "Mens",
+        vraag: "Waar begint de ontwikkeling van een mens?",
+        antwoorden: [
+          "Bij een bevruchte eicel",
+          "Bij de geboorte",
+          "In de puberteit",
+          "Bij de eerste tand"
+        ],
+        goed: 0,
+        uitleg:
+          "De ontwikkeling begint wanneer een eicel door een zaadcel wordt bevrucht."
+      },
+      {
+        categorie: "Mens",
+        vraag: "Wat gebeurt er in de puberteit?",
+        antwoorden: [
+          "Het lichaam wordt geslachtsrijp",
+          "Alle groei stopt direct",
+          "De levenscyclus begint opnieuw",
+          "Het lichaam verliest alle hormonen"
+        ],
+        goed: 0,
+        uitleg:
+          "Tijdens de puberteit verandert het lichaam door hormonen en wordt het geslachtsrijp."
+      }
+    ];
+
+    let quizVragen = [];
+    let huidigeIndex = 0;
+    let score = 0;
+    let munten = 0;
+    let levens = 3;
+    let goedAantal = 0;
+    let foutAantal = 0;
+    let beantwoord = false;
+    let timerId = null;
+    let resterendeTijd = 20;
+    let tijdPerVraag = 20;
+
+    let flitskaarten = [];
+    let huidigeFlits = 0;
+
+    let voorlezenAan = true;
+    let nederlandseStem = null;
+    let stemIsOntgrendeld = false;
+
+    const startScherm = document.getElementById("startScherm");
+    const quizScherm = document.getElementById("quizScherm");
+    const eindScherm = document.getElementById("eindScherm");
+    const flitsScherm = document.getElementById("flitsScherm");
+
+    /*
+    ==========================================================
+    VOORLEES-API
+    ==========================================================
+    */
+
+    function spraakBeschikbaar() {
+      return (
+        "speechSynthesis" in window &&
+        "SpeechSynthesisUtterance" in window
+      );
+    }
+
+    function laadStemmen() {
+      if (!spraakBeschikbaar()) return;
+
+      const stemmen = window.speechSynthesis.getVoices();
+
+      nederlandseStem =
+        stemmen.find(stem =>
+          stem.lang.toLowerCase() === "nl-nl"
+        ) ||
+        stemmen.find(stem =>
+          stem.lang.toLowerCase().startsWith("nl")
+        ) ||
+        null;
+    }
+
+    laadStemmen();
+
+    if (spraakBeschikbaar()) {
+      window.speechSynthesis.onvoiceschanged = laadStemmen;
+    } else {
+      voorlezenAan = false;
+      document.getElementById("voorleesKnop").textContent =
+        "🔇 Stem niet beschikbaar";
+    }
+
+    function ontgrendelSpraak() {
+      if (!spraakBeschikbaar() || stemIsOntgrendeld) return;
+
+      /*
+      Sommige mobiele browsers willen dat spraak voor het eerst
+      wordt gestart na een klik van de gebruiker.
+      */
+      const leegBericht = new SpeechSynthesisUtterance("");
+      leegBericht.volume = 0;
+
+      window.speechSynthesis.speak(leegBericht);
+      stemIsOntgrendeld = true;
+    }
+
+    function spreekUit(tekst, forceer = false) {
+      if ((!voorlezenAan && !forceer) || !tekst) return;
+
+      if (!spraakBeschikbaar()) {
+        toonMelding("Voorlezen wordt niet ondersteund.");
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const uitspraak = new SpeechSynthesisUtterance(
+        tekst.replace(/<[^>]*>/g, " ")
+      );
+
+      uitspraak.lang = "nl-NL";
+      uitspraak.rate = 0.88;
+      uitspraak.pitch = 1;
+      uitspraak.volume = 1;
+
+      if (nederlandseStem) {
+        uitspraak.voice = nederlandseStem;
+      }
+
+      uitspraak.onerror = gebeurtenis => {
+        if (
+          gebeurtenis.error !== "canceled" &&
+          gebeurtenis.error !== "interrupted"
+        ) {
+          console.error("Spraakfout:", gebeurtenis.error);
+        }
+      };
+
+      window.speechSynthesis.speak(uitspraak);
+    }
+
+    function stopVoorlezen() {
+      if (spraakBeschikbaar()) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    function wisselVoorlezen() {
+      if (!spraakBeschikbaar()) {
+        toonMelding("Deze browser ondersteunt geen voorlezen.");
+        return;
+      }
+
+      ontgrendelSpraak();
+      voorlezenAan = !voorlezenAan;
+
+      const knop = document.getElementById("voorleesKnop");
+
+      if (voorlezenAan) {
+        knop.textContent = "🔊 Voorlezen: aan";
+        spreekUit("Voorlezen staat aan.");
+      } else {
+        stopVoorlezen();
+        knop.textContent = "🔇 Voorlezen: uit";
+      }
+    }
+
+    function leesHuidigeVraagVoor() {
+      if (!quizVragen[huidigeIndex]) return;
+
+      ontgrendelSpraak();
+
+      const vraag = quizVragen[huidigeIndex];
+
+      const antwoordTekst = vraag.antwoorden
+        .map((antwoord, index) => {
+          return `Antwoord ${index + 1}: ${antwoord}.`;
+        })
+        .join(" ");
+
+      spreekUit(
+        `Vraag ${huidigeIndex + 1}. ` +
+        `${vraag.vraag}. ${antwoordTekst}`
+      );
+    }
+
+    function leesFeedbackVoor(isGoed, vraag) {
+      const begin = isGoed
+        ? "Goed gedaan."
+        : "Dat is niet correct.";
+
+      spreekUit(
+        `${begin} Het juiste antwoord is ` +
+        `${vraag.antwoorden[vraag.goed]}. ${vraag.uitleg}`
+      );
+    }
+
+    /*
+    ==========================================================
+    ALGEMENE FUNCTIES
+    ==========================================================
+    */
+
+    function haalTopscoreOp() {
+      try {
+        return Number(localStorage.getItem("biobattle-topscore")) || 0;
+      } catch {
+        return 0;
+      }
+    }
+
+    function bewaarTopscore(nieuweScore) {
+      try {
+        localStorage.setItem(
+          "biobattle-topscore",
+          String(nieuweScore)
+        );
+      } catch {
+        console.warn("De topscore kon niet worden opgeslagen.");
+      }
+    }
+
+    document.getElementById("topscore").textContent =
+      haalTopscoreOp();
+
+    function toonScherm(scherm) {
+      [startScherm, quizScherm, eindScherm, flitsScherm]
+        .forEach(element => element.classList.add("verborgen"));
+
+      scherm.classList.remove("verborgen");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function schud(lijst) {
+      const kopie = [...lijst];
+
+      for (let i = kopie.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [kopie[i], kopie[j]] = [kopie[j], kopie[i]];
+      }
+
+      return kopie;
+    }
+
+    /*
+    ==========================================================
+    QUIZ
+    ==========================================================
+    */
+
+    function startQuiz() {
+      ontgrendelSpraak();
+      stopVoorlezen();
+
+      const naam =
+        document.getElementById("naam").value.trim() || "Speler";
+
+      const aantal =
+        Number(document.getElementById("aantalVragen").value);
+
+      const niveau =
+        document.getElementById("moeilijkheid").value;
+
+      tijdPerVraag =
+        niveau === "rustig" ? 30 :
+        niveau === "snel" ? 12 :
+        20;
+
+      quizVragen = schud(alleVragen).slice(
+        0,
+        Math.min(aantal, alleVragen.length)
+      );
+
+      huidigeIndex = 0;
+      score = 0;
+      munten = 0;
+      levens = 3;
+      goedAantal = 0;
+      foutAantal = 0;
+
+      document.getElementById("spelerNaam").textContent = naam;
+
+      toonScherm(quizScherm);
+      laadVraag();
+    }
+
+    function laadVraag() {
+      clearInterval(timerId);
+      stopVoorlezen();
+
+      beantwoord = false;
+
+      const vraag = quizVragen[huidigeIndex];
+
+      document.getElementById("vraagNummer").textContent =
+        `${huidigeIndex + 1}/${quizVragen.length}`;
+
+      document.getElementById("score").textContent = score;
+      document.getElementById("munten").textContent = munten;
+      document.getElementById("levens").textContent =
+        "❤️".repeat(Math.max(levens, 0)) || "💔";
+
+      document.getElementById("voortgangBalk").style.width =
+        `${(huidigeIndex / quizVragen.length) * 100}%`;
+
+      document.getElementById("categorie").textContent =
+        vraag.categorie;
+
+      document.getElementById("vraagTekst").textContent =
+        vraag.vraag;
+
+      const feedback = document.getElementById("feedback");
+      feedback.className = "feedback verborgen";
+      feedback.innerHTML = "";
+
+      document
+        .getElementById("volgendeKnop")
+        .classList.add("verborgen");
+
+      const antwoordenVak =
+        document.getElementById("antwoorden");
+
+      antwoordenVak.innerHTML = "";
+
+      /*
+      De zichtbare antwoorden worden geschud. De juiste index
+      blijft via origineleIndex behouden.
+      */
+      const geschuddeAntwoorden = schud(
+        vraag.antwoorden.map((tekst, index) => ({
+          tekst,
+          origineleIndex: index
+        }))
+      );
+
+      geschuddeAntwoorden.forEach((antwoord, zichtbareIndex) => {
+        const knop = document.createElement("button");
+
+        knop.className = "antwoord";
+        knop.dataset.origineleIndex = antwoord.origineleIndex;
+        knop.textContent =
+          `${zichtbareIndex + 1}. ${antwoord.tekst}`;
+
+        knop.onclick = () => {
+          controleerAntwoord(
+            antwoord.origineleIndex,
+            knop,
+            vraag
+          );
+        };
+
+        antwoordenVak.appendChild(knop);
+      });
+
+      startTimer();
+
+      /*
+      Lees de antwoorden in dezelfde volgorde voor als waarin
+      ze op het scherm staan.
+      */
+      if (voorlezenAan) {
+        const gesprokenAntwoorden = geschuddeAntwoorden
+          .map((antwoord, index) =>
+            `Antwoord ${index + 1}: ${antwoord.tekst}.`
+          )
+          .join(" ");
+
+        setTimeout(() => {
+          spreekUit(
+            `Vraag ${huidigeIndex + 1}. ` +
+            `${vraag.vraag}. ${gesprokenAntwoorden}`
+          );
+        }, 250);
+      }
+    }
+
+    function startTimer() {
+      resterendeTijd = tijdPerVraag;
+
+      const timer = document.getElementById("timer");
+      timer.textContent = resterendeTijd;
+      timer.classList.remove("timer-gevaar");
+
+      timerId = setInterval(() => {
+        resterendeTijd--;
+        timer.textContent = resterendeTijd;
+
+        if (resterendeTijd <= 5) {
+          timer.classList.add("timer-gevaar");
+        }
+
+        if (resterendeTijd <= 0) {
+          clearInterval(timerId);
+          tijdVoorbij();
+        }
+      }, 1000);
+    }
+
+    function controleerAntwoord(gekozenIndex, knop, vraag) {
+      if (beantwoord) return;
+
+      beantwoord = true;
+      clearInterval(timerId);
+      stopVoorlezen();
+
+      const knoppen = document.querySelectorAll(".antwoord");
+
+      knoppen.forEach(antwoordKnop => {
+        antwoordKnop.disabled = true;
+      });
+
+      const isGoed = gekozenIndex === vraag.goed;
+
+      if (isGoed) {
+        const verdiend = 100 + resterendeTijd * 5;
+        const nieuweMunten = 10 + Math.ceil(resterendeTijd / 2);
+
+        score += verdiend;
+        munten += nieuweMunten;
+        goedAantal++;
+
+        knop.classList.add("goed");
+
+        toonFeedback(
+          true,
+          `Goed! +${verdiend} punten. ${vraag.uitleg}`
+        );
+
+        toonMelding(`+${verdiend} ⭐  +${nieuweMunten} 🪙`);
+      } else {
+        levens--;
+        foutAantal++;
+
+        knop.classList.add("fout");
+        markeerJuisteAntwoord(vraag);
+
+        toonFeedback(
+          false,
+          `Het juiste antwoord is ` +
+          `<strong>${vraag.antwoorden[vraag.goed]}</strong>. ` +
+          vraag.uitleg
+        );
+      }
+
+      leesFeedbackVoor(isGoed, vraag);
+      werkStatusBij();
+
+      document
+        .getElementById("volgendeKnop")
+        .classList.remove("verborgen");
+    }
+
+    function markeerJuisteAntwoord(vraag) {
+      document.querySelectorAll(".antwoord").forEach(knop => {
+        if (
+          Number(knop.dataset.origineleIndex) === vraag.goed
+        ) {
+          knop.classList.add("goed");
+        }
+      });
+    }
+
+    function tijdVoorbij() {
+      if (beantwoord) return;
+
+      beantwoord = true;
+      levens--;
+      foutAantal++;
+
+      const vraag = quizVragen[huidigeIndex];
+
+      document.querySelectorAll(".antwoord").forEach(knop => {
+        knop.disabled = true;
+      });
+
+      markeerJuisteAntwoord(vraag);
+
+      toonFeedback(
+        false,
+        `De tijd is voorbij. Het juiste antwoord is ` +
+        `<strong>${vraag.antwoorden[vraag.goed]}</strong>. ` +
+        vraag.uitleg
+      );
+
+      spreekUit(
+        `De tijd is voorbij. Het juiste antwoord is ` +
+        `${vraag.antwoorden[vraag.goed]}. ${vraag.uitleg}`
+      );
+
+      werkStatusBij();
+
+      document
+        .getElementById("volgendeKnop")
+        .classList.remove("verborgen");
+    }
+
+    function toonFeedback(isGoed, tekst) {
+      const feedback = document.getElementById("feedback");
+
+      feedback.className =
+        isGoed ? "feedback goed" : "feedback fout";
+
+      feedback.innerHTML =
+        `<strong>${isGoed ? "✅ Correct" : "❌ Niet correct"}</strong><br>` +
+        tekst;
+    }
+
+    function werkStatusBij() {
+      document.getElementById("score").textContent = score;
+      document.getElementById("munten").textContent = munten;
+      document.getElementById("levens").textContent =
+        "❤️".repeat(Math.max(levens, 0)) || "💔";
+    }
+
+    function volgendeVraag() {
+      stopVoorlezen();
+      huidigeIndex++;
+
+      if (
+        huidigeIndex >= quizVragen.length ||
+        levens <= 0
+      ) {
+        eindigQuiz();
+      } else {
+        laadVraag();
+      }
+    }
+
+    function eindigQuiz() {
+      clearInterval(timerId);
+      stopVoorlezen();
+
+      const percentage = Math.round(
+        (goedAantal / quizVragen.length) * 100
+      );
+
+      let titel = "Blijf oefenen!";
+      let icoon = "🌱";
+
+      if (percentage >= 50) {
+        titel = "Goed gedaan!";
+        icoon = "⭐";
+      }
+
+      if (percentage >= 75) {
+        titel = "Super gespeeld!";
+        icoon = "🏆";
+      }
+
+      if (percentage === 100) {
+        titel = "Perfecte score!";
+        icoon = "👑";
+      }
+
+      if (levens <= 0) {
+        titel = "Je levens zijn op";
+        icoon = "💔";
+      }
+
+      document.getElementById("eindTitel").textContent = titel;
+      document.getElementById("eindIcoon").textContent = icoon;
+      document.getElementById("eindTekst").textContent =
+        `Je had ${percentage} procent van de vragen goed.`;
+
+      document.getElementById("eindScore").textContent = score;
+      document.getElementById("eindGoed").textContent = goedAantal;
+      document.getElementById("eindFout").textContent = foutAantal;
+      document.getElementById("eindMunten").textContent = munten;
+
+      if (score > haalTopscoreOp()) {
+        bewaarTopscore(score);
+        document.getElementById("topscore").textContent = score;
+      }
+
+      toonScherm(eindScherm);
+
+      spreekUit(
+        `${titel} Je behaalde ${score} punten. ` +
+        `Je had ${percentage} procent van de vragen goed.`
+      );
+    }
+
+    /*
+    ==========================================================
+    FLITSKAARTEN
+    ==========================================================
+    */
+
+    function startFlitskaarten() {
+      ontgrendelSpraak();
+      stopVoorlezen();
+
+      flitskaarten = schud(
+        alleVragen.map(vraag => ({
+          term: vraag.vraag,
+          uitleg:
+            `${vraag.antwoorden[vraag.goed]}. ${vraag.uitleg}`
+        }))
+      );
+
+      huidigeFlits = 0;
+      toonScherm(flitsScherm);
+      laadFlitskaart();
+    }
+
+    function laadFlitskaart() {
+      stopVoorlezen();
+
+      const kaart = flitskaarten[huidigeFlits];
+
+      document
+        .getElementById("flitsBinnenkant")
+        .classList.remove("omgedraaid");
+
+      document.getElementById("flitsTerm").textContent =
+        kaart.term;
+
+      document.getElementById("flitsUitleg").textContent =
+        kaart.uitleg;
+
+      document.getElementById("flitsTeller").textContent =
+        `${huidigeFlits + 1}/${flitskaarten.length}`;
+
+      spreekUit(kaart.term);
+    }
+
+    function draaiFlitskaart() {
+      const binnenkant =
+        document.getElementById("flitsBinnenkant");
+
+      binnenkant.classList.toggle("omgedraaid");
+
+      if (binnenkant.classList.contains("omgedraaid")) {
+        spreekUit(flitskaarten[huidigeFlits].uitleg);
+      } else {
+        spreekUit(flitskaarten[huidigeFlits].term);
+      }
+    }
+
+    function leesFlitskaartVoor() {
+      ontgrendelSpraak();
+
+      const kaart = flitskaarten[huidigeFlits];
+
+      spreekUit(`${kaart.term}. ${kaart.uitleg}`);
+    }
+
+    function volgendeFlitskaart() {
+      huidigeFlits =
+        (huidigeFlits + 1) % flitskaarten.length;
+
+      laadFlitskaart();
+    }
+
+    function vorigeFlitskaart() {
+      huidigeFlits =
+        (huidigeFlits - 1 + flitskaarten.length) %
+        flitskaarten.length;
+
+      laadFlitskaart();
+    }
+
+    function naarStart() {
+      clearInterval(timerId);
+      stopVoorlezen();
+      toonScherm(startScherm);
+    }
+
+    function toonMelding(tekst) {
+      const melding = document.createElement("div");
+
+      melding.className = "melding";
+      melding.textContent = tekst;
+      document.body.appendChild(melding);
+
+      setTimeout(() => melding.remove(), 1800);
+    }
+
+    /*
+    ==========================================================
+    TOETSENBORD
+    ==========================================================
+    */
+
+    document.addEventListener("keydown", gebeurtenis => {
+      if (!quizScherm.classList.contains("verborgen")) {
+        if (
+          ["1", "2", "3", "4"].includes(gebeurtenis.key) &&
+          !beantwoord
+        ) {
+          const knoppen =
+            document.querySelectorAll(".antwoord");
+
+          const index = Number(gebeurtenis.key) - 1;
+
+          if (knoppen[index]) {
+            knoppen[index].click();
+          }
+        }
+
+        if (gebeurtenis.key === "Enter" && beantwoord) {
+          volgendeVraag();
+        }
+      }
+
+      if (
+        !flitsScherm.classList.contains("verborgen") &&
+        gebeurtenis.code === "Space"
+      ) {
+        gebeurtenis.preventDefault();
+        draaiFlitskaart();
+      }
+    });
+
+    /*
+    Stop de stem als de pagina wordt gesloten of verlaten.
+    */
+    window.addEventListener("beforeunload", stopVoorlezen);
+  </script>
+</body>
+</html>
