@@ -1,1169 +1,3745 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BioBattle – Planten en dieren</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-:root {
-  --donker:#14281d;
-  --groen:#22c66b;
-  --groen2:#087d3d;
-  --rood:#ef476f;
-  --blauw:#39bced;
-  --paars:#7c4de3;
-  --geel:#ffd166;
-  --wit:#fff;
-  --schaduw:0 14px 35px rgba(20,40,29,.17);
-}
+  <title>BioBattle – Planten en dieren</title>
 
-* { box-sizing:border-box; }
+  <style>
+    :root {
+      --donker: #14281d;
+      --groen: #22c66b;
+      --groen-donker: #087d3d;
+      --lichtgroen: #dcffe8;
+      --rood: #ef476f;
+      --blauw: #39bced;
+      --paars: #7c4de3;
+      --geel: #ffd166;
+      --wit: #ffffff;
+      --schaduw: 0 14px 35px rgba(20, 40, 29, 0.17);
+    }
 
-body {
-  margin:0;
-  min-height:100vh;
-  font-family:Arial,Helvetica,sans-serif;
-  color:var(--donker);
-  background:
-    radial-gradient(circle at 10% 5%,#c9ffd5,transparent 30%),
-    radial-gradient(circle at 95% 20%,#ccefff,transparent 25%),
-    linear-gradient(135deg,#edfff4,#ecf7ff);
-}
+    * {
+      box-sizing: border-box;
+    }
 
-button,input,select { font:inherit; }
-button { cursor:pointer; }
-.verborgen { display:none!important; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--donker);
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 10% 5%, #c9ffd5, transparent 30%),
+        radial-gradient(circle at 95% 20%, #ccefff, transparent 25%),
+        linear-gradient(135deg, #edfff4, #ecf7ff);
+    }
 
-.app {
-  width:min(1100px,94%);
-  margin:auto;
-  padding:22px 0 50px;
-}
+    button,
+    input,
+    select {
+      font: inherit;
+    }
 
-.bovenbalk {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  margin-bottom:18px;
-}
+    button {
+      cursor: pointer;
+    }
 
-.logo {
-  margin:0;
-  font-size:clamp(1.8rem,5vw,2.8rem);
-}
+    button:disabled {
+      cursor: default;
+    }
 
-.logo span { color:var(--groen); }
+    .verborgen {
+      display: none !important;
+    }
 
-.rechts {
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:9px;
-}
+    .app {
+      width: min(1120px, 94%);
+      margin: auto;
+      padding: 22px 0 50px;
+    }
 
-.topscore {
-  padding:11px 16px;
-  color:#fff;
-  font-weight:900;
-  background:var(--paars);
-  border-radius:999px;
-  box-shadow:var(--schaduw);
-}
+    .bovenbalk {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
 
-.kaart {
-  padding:clamp(21px,5vw,42px);
-  background:rgba(255,255,255,.97);
-  border:3px solid #fff;
-  border-radius:27px;
-  box-shadow:var(--schaduw);
-}
+    .logo {
+      margin: 0;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+    }
 
-.intro,.eindkaart { text-align:center; }
+    .logo span {
+      color: var(--groen);
+    }
 
-.intro-icoon {
-  display:grid;
-  width:105px;
-  height:105px;
-  margin:0 auto 15px;
-  place-items:center;
-  font-size:57px;
-  background:#b9fbc0;
-  border-radius:29px;
-  transform:rotate(-5deg);
-}
+    .rechts {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 9px;
+    }
 
-.intro h2 {
-  margin:8px 0;
-  font-size:clamp(1.7rem,4vw,2.5rem);
-}
+    .topscore {
+      padding: 11px 16px;
+      color: white;
+      font-weight: 900;
+      background: var(--paars);
+      border-radius: 999px;
+      box-shadow: var(--schaduw);
+    }
 
-.intro p {
-  max-width:720px;
-  margin:8px auto 23px;
-  color:#496456;
-  line-height:1.55;
-}
+    .kaart {
+      padding: clamp(21px, 5vw, 42px);
+      background: rgba(255, 255, 255, 0.97);
+      border: 3px solid white;
+      border-radius: 27px;
+      box-shadow: var(--schaduw);
+    }
 
-.instellingen {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px;
-  max-width:900px;
-  margin:0 auto 24px;
-  text-align:left;
-}
+    .intro,
+    .eindkaart {
+      text-align: center;
+    }
 
-label { font-weight:900; }
+    .intro-icoon {
+      display: grid;
+      width: 105px;
+      height: 105px;
+      margin: 0 auto 15px;
+      place-items: center;
+      font-size: 57px;
+      background: #b9fbc0;
+      border-radius: 29px;
+      transform: rotate(-5deg);
+    }
 
-input,select {
-  width:100%;
-  margin-top:7px;
-  padding:13px;
-  color:var(--donker);
-  background:#f7fff9;
-  border:2px solid #cbe9d3;
-  border-radius:13px;
-  outline:none;
-}
+    .intro h2 {
+      margin: 8px 0;
+      font-size: clamp(1.7rem, 4vw, 2.5rem);
+    }
 
-input:focus,select:focus { border-color:var(--groen); }
+    .intro p {
+      max-width: 760px;
+      margin: 8px auto 23px;
+      color: #496456;
+      line-height: 1.55;
+    }
 
-.hoofdknop,.tweede-knop {
-  padding:13px 20px;
-  font-weight:900;
-  border-radius:14px;
-  transition:.15s;
-}
+    .infobalk {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 900px;
+      margin: 0 auto 25px;
+    }
 
-.hoofdknop {
-  color:white;
-  background:linear-gradient(135deg,var(--groen),#16a75a);
-  border:0;
-  box-shadow:0 7px 0 var(--groen2);
-}
+    .infovak {
+      padding: 15px;
+      text-align: left;
+      background: #f4fff7;
+      border: 2px solid #d8eee0;
+      border-radius: 16px;
+    }
 
-.hoofdknop:hover { transform:translateY(-2px); }
+    .infovak strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--groen-donker);
+    }
 
-.tweede-knop {
-  color:var(--donker);
-  background:white;
-  border:2px solid #bdd8c6;
-}
+    .instellingen {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      max-width: 940px;
+      margin: 0 auto 24px;
+      text-align: left;
+    }
 
-.knoppenrij {
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:12px;
-}
+    label {
+      font-weight: 900;
+    }
 
-.spelstatus {
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:9px;
-  margin-bottom:15px;
-}
+    input,
+    select {
+      width: 100%;
+      margin-top: 7px;
+      padding: 13px;
+      color: var(--donker);
+      background: #f7fff9;
+      border: 2px solid #cbe9d3;
+      border-radius: 13px;
+      outline: none;
+    }
 
-.statusvak {
-  padding:11px;
-  text-align:center;
-  font-weight:900;
-  background:#fff;
-  border-radius:15px;
-  box-shadow:0 7px 17px rgba(19,42,32,.09);
-}
+    input:focus,
+    select:focus {
+      border-color: var(--groen);
+      box-shadow: 0 0 0 4px rgba(34, 198, 107, 0.12);
+    }
 
-.statusvak small {
-  display:block;
-  margin-bottom:4px;
-  color:#688174;
-  font-size:.7rem;
-  text-transform:uppercase;
-}
+    .hoofdknop,
+    .tweede-knop,
+    .gevaar-knop {
+      padding: 13px 20px;
+      font-weight: 900;
+      border-radius: 14px;
+      transition: 0.15s;
+    }
 
-.voortgang {
-  height:15px;
-  margin-bottom:17px;
-  overflow:hidden;
-  background:#dcefe2;
-  border-radius:999px;
-}
+    .hoofdknop {
+      color: white;
+      background: linear-gradient(135deg, var(--groen), #16a75a);
+      border: 0;
+      box-shadow: 0 7px 0 var(--groen-donker);
+    }
 
-.voortgang-balk {
-  width:0;
-  height:100%;
-  background:linear-gradient(90deg,var(--groen),var(--blauw));
-  transition:width .3s;
-}
+    .hoofdknop:hover {
+      transform: translateY(-2px);
+    }
 
-.categorie {
-  display:inline-block;
-  padding:7px 12px;
-  color:#09683b;
-  font-size:.83rem;
-  font-weight:900;
-  background:#d9ffe8;
-  border-radius:999px;
-}
+    .hoofdknop:active {
+      transform: translateY(4px);
+      box-shadow: 0 3px 0 var(--groen-donker);
+    }
 
-#vraagTekst {
-  margin:20px 0 14px;
-  font-size:clamp(1.35rem,4vw,2rem);
-  line-height:1.3;
-}
+    .tweede-knop {
+      color: var(--donker);
+      background: white;
+      border: 2px solid #bdd8c6;
+    }
 
-.vraag-acties { margin-bottom:20px; }
+    .gevaar-knop {
+      color: #8a1232;
+      background: #fff2f5;
+      border: 2px solid #ffb7c7;
+    }
 
-.antwoorden {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:13px;
-}
+    .knoppenrij {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
 
-.antwoord {
-  min-height:80px;
-  padding:16px;
-  color:var(--donker);
-  font-weight:800;
-  text-align:left;
-  background:#f8fffa;
-  border:3px solid #d7ece0;
-  border-radius:17px;
-  transition:.16s;
-}
+    .spelstatus {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 9px;
+      margin-bottom: 15px;
+    }
 
-.antwoord:hover:not(:disabled) {
-  border-color:var(--groen);
-  transform:translateY(-3px);
-}
+    .statusvak {
+      padding: 11px;
+      text-align: center;
+      font-weight: 900;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 7px 17px rgba(19, 42, 32, 0.09);
+    }
 
-.antwoord.goed {
-  color:#075f34;
-  background:#caffdc;
-  border-color:#20b963;
-}
+    .statusvak small {
+      display: block;
+      margin-bottom: 4px;
+      color: #688174;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+    }
 
-.antwoord.fout {
-  color:#841431;
-  background:#ffd3dc;
-  border-color:var(--rood);
-}
+    .voortgang {
+      height: 15px;
+      margin-bottom: 17px;
+      overflow: hidden;
+      background: #dcefe2;
+      border-radius: 999px;
+    }
 
-.feedback {
-  margin-top:17px;
-  padding:16px;
-  line-height:1.5;
-  background:#f2f7ff;
-  border-left:6px solid var(--blauw);
-  border-radius:12px;
-}
+    .voortgang-balk {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--groen), var(--blauw));
+      transition: width 0.3s;
+    }
 
-.feedback.goed {
-  background:#e5ffed;
-  border-color:var(--groen);
-}
+    .categorie {
+      display: inline-block;
+      padding: 7px 12px;
+      color: #09683b;
+      font-size: 0.83rem;
+      font-weight: 900;
+      background: #d9ffe8;
+      border-radius: 999px;
+    }
 
-.feedback.fout {
-  background:#fff0f3;
-  border-color:var(--rood);
-}
+    .moeilijk-label {
+      margin-left: 7px;
+      color: #76510b;
+      background: #fff2b8;
+    }
 
-.volgende {
-  display:block;
-  margin:18px 0 0 auto;
-}
+    #vraagTekst {
+      margin: 20px 0 14px;
+      font-size: clamp(1.35rem, 4vw, 2rem);
+      line-height: 1.3;
+    }
 
-.timer-gevaar {
-  color:var(--rood);
-  animation:knipper .7s infinite;
-}
+    .context {
+      margin: 0 0 18px;
+      padding: 14px;
+      color: #385448;
+      line-height: 1.5;
+      background: #f4faf6;
+      border-left: 5px solid var(--groen);
+      border-radius: 10px;
+    }
 
-@keyframes knipper { 50% { opacity:.3; } }
+    .vraag-acties {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-bottom: 20px;
+    }
 
-.trofee { font-size:78px; }
+    .antwoorden {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 13px;
+    }
 
-.eindscore {
-  display:inline-block;
-  margin:15px;
-  padding:17px 30px;
-  color:white;
-  font-size:2rem;
-  font-weight:900;
-  background:var(--paars);
-  border-radius:19px;
-}
+    .antwoord {
+      min-height: 80px;
+      padding: 16px;
+      color: var(--donker);
+      font-weight: 800;
+      text-align: left;
+      background: #f8fffa;
+      border: 3px solid #d7ece0;
+      border-radius: 17px;
+      transition: 0.16s;
+    }
 
-.statistieken {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-  max-width:650px;
-  margin:20px auto 26px;
-}
+    .antwoord:hover:not(:disabled) {
+      border-color: var(--groen);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 17px rgba(34, 198, 107, 0.13);
+    }
 
-.statistiek {
-  padding:17px;
-  background:#f5fff8;
-  border:2px solid #d9eee0;
-  border-radius:15px;
-}
+    .antwoord.goed {
+      color: #075f34;
+      background: #caffdc;
+      border-color: #20b963;
+    }
 
-.statistiek strong {
-  display:block;
-  font-size:1.5rem;
-}
+    .antwoord.fout {
+      color: #841431;
+      background: #ffd3dc;
+      border-color: var(--rood);
+    }
 
-.flitskaart {
-  min-height:340px;
-  perspective:1000px;
-}
+    .feedback {
+      margin-top: 17px;
+      padding: 16px;
+      line-height: 1.5;
+      background: #f2f7ff;
+      border-left: 6px solid var(--blauw);
+      border-radius: 12px;
+    }
 
-.flits-binnenkant {
-  position:relative;
-  min-height:320px;
-  transition:transform .6s;
-  transform-style:preserve-3d;
-}
+    .feedback.goed {
+      background: #e5ffed;
+      border-color: var(--groen);
+    }
 
-.flits-binnenkant.omgedraaid {
-  transform:rotateY(180deg);
-}
+    .feedback.fout {
+      background: #fff0f3;
+      border-color: var(--rood);
+    }
 
-.flits-voor,.flits-achter {
-  position:absolute;
-  inset:0;
-  display:grid;
-  padding:25px;
-  text-align:center;
-  place-items:center;
-  border:4px solid var(--groen);
-  border-radius:24px;
-  backface-visibility:hidden;
-}
+    .volgende {
+      display: block;
+      margin: 18px 0 0 auto;
+    }
 
-.flits-voor { background:#fff; }
+    .timer-gevaar {
+      color: var(--rood);
+      animation: knipper 0.7s infinite;
+    }
 
-.flits-achter {
-  color:#fff;
-  background:linear-gradient(135deg,var(--groen),#0e8548);
-  transform:rotateY(180deg);
-}
+    @keyframes knipper {
+      50% {
+        opacity: 0.3;
+      }
+    }
 
-.flits-term {
-  font-size:clamp(1.5rem,5vw,2.5rem);
-  font-weight:900;
-}
+    .trofee {
+      font-size: 78px;
+    }
 
-.flits-uitleg {
-  font-size:clamp(1.05rem,3vw,1.4rem);
-  line-height:1.55;
-}
+    .eindscore {
+      display: inline-block;
+      margin: 15px;
+      padding: 17px 30px;
+      color: white;
+      font-size: 2rem;
+      font-weight: 900;
+      background: var(--paars);
+      border-radius: 19px;
+    }
 
-.flitsbediening {
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:11px;
-  margin-top:17px;
-}
+    .statistieken {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      max-width: 800px;
+      margin: 20px auto 26px;
+    }
 
-.melding {
-  position:fixed;
-  top:17px;
-  left:50%;
-  z-index:100;
-  padding:12px 18px;
-  color:white;
-  font-weight:900;
-  white-space:nowrap;
-  background:var(--donker);
-  border-radius:999px;
-  transform:translateX(-50%);
-}
+    .statistiek {
+      padding: 17px;
+      background: #f5fff8;
+      border: 2px solid #d9eee0;
+      border-radius: 15px;
+    }
 
-footer {
-  margin-top:24px;
-  color:#6d8377;
-  text-align:center;
-}
+    .statistiek strong {
+      display: block;
+      font-size: 1.5rem;
+    }
 
-@media(max-width:760px) {
-  .instellingen,.spelstatus { grid-template-columns:1fr 1fr; }
-  .antwoorden,.statistieken { grid-template-columns:1fr; }
-  .bovenbalk { align-items:flex-start; flex-direction:column; }
-}
+    .resultaatlijst {
+      max-width: 800px;
+      margin: 0 auto 25px;
+      text-align: left;
+    }
 
-@media(max-width:430px) {
-  .instellingen,.spelstatus { grid-template-columns:1fr; }
-  .kaart { padding:19px; }
-}
-</style>
+    .resultaat-regel {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 7px 0;
+      padding: 10px 13px;
+      background: #f6fbf8;
+      border-radius: 10px;
+    }
+
+    .flitskaart {
+      min-height: 360px;
+      perspective: 1000px;
+    }
+
+    .flits-binnenkant {
+      position: relative;
+      min-height: 340px;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .flits-binnenkant.omgedraaid {
+      transform: rotateY(180deg);
+    }
+
+    .flits-voor,
+    .flits-achter {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      padding: 28px;
+      text-align: center;
+      place-items: center;
+      border: 4px solid var(--groen);
+      border-radius: 24px;
+      backface-visibility: hidden;
+    }
+
+    .flits-voor {
+      background: white;
+    }
+
+    .flits-achter {
+      color: white;
+      background: linear-gradient(135deg, var(--groen), #0e8548);
+      transform: rotateY(180deg);
+    }
+
+    .flits-term {
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      font-weight: 900;
+    }
+
+    .flits-uitleg {
+      font-size: clamp(1.05rem, 3vw, 1.4rem);
+      line-height: 1.55;
+    }
+
+    .flitsbediening {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 11px;
+      margin-top: 17px;
+    }
+
+    .melding {
+      position: fixed;
+      top: 17px;
+      left: 50%;
+      z-index: 100;
+      max-width: 90%;
+      padding: 12px 18px;
+      color: white;
+      font-weight: 900;
+      text-align: center;
+      background: var(--donker);
+      border-radius: 999px;
+      transform: translateX(-50%);
+      box-shadow: var(--schaduw);
+    }
+
+    footer {
+      margin-top: 24px;
+      color: #6d8377;
+      text-align: center;
+    }
+
+    @media (max-width: 850px) {
+      .spelstatus {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .infobalk,
+      .instellingen {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .antwoorden,
+      .statistieken,
+      .infobalk {
+        grid-template-columns: 1fr;
+      }
+
+      .bovenbalk {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .instellingen,
+      .spelstatus {
+        grid-template-columns: 1fr;
+      }
+
+      .kaart {
+        padding: 19px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<main class="app">
+  <main class="app">
+    <header class="bovenbalk">
+      <h1 class="logo">Bio<span>Battle</span> 🌱</h1>
 
-<header class="bovenbalk">
-  <h1 class="logo">Bio<span>Battle</span> 🌱</h1>
+      <div class="rechts">
+        <button
+          id="voorleesKnop"
+          class="tweede-knop"
+          onclick="wisselVoorlezen()"
+        >
+          🔊 Voorlezen: aan
+        </button>
 
-  <div class="rechts">
-    <button id="voorleesKnop" class="tweede-knop"
-            onclick="wisselVoorlezen()">
-      🔊 Voorlezen: aan
-    </button>
-
-    <div class="topscore">
-      🏆 Topscore: <span id="topscore">0</span>
-    </div>
-  </div>
-</header>
-
-<section id="startScherm">
-  <div class="kaart intro">
-    <div class="intro-icoon">🧬</div>
-    <h2>Planten, dieren en levenskenmerken</h2>
-
-    <p>
-      Oefen begrippen én toetsvragen. De vragen en antwoorden worden
-      iedere speelronde willekeurig gekozen en door elkaar gezet.
-    </p>
-
-    <div class="instellingen">
-      <label>
-        Naam
-        <input id="naam" maxlength="20" placeholder="Vul je naam in">
-      </label>
-
-      <label>
-        Aantal vragen
-        <select id="aantalVragen">
-          <option value="10">10 vragen</option>
-          <option value="20">20 vragen</option>
-          <option value="30">30 vragen</option>
-          <option value="50">50 vragen</option>
-          <option value="999">Alle vragen</option>
-        </select>
-      </label>
-
-      <label>
-        Categorie
-        <select id="categorieKeuze">
-          <option value="Alles">Alles door elkaar</option>
-          <option value="Levenskenmerken">Levenskenmerken</option>
-          <option value="Organismen">Organismen</option>
-          <option value="Groei en ontwikkeling">Groei en ontwikkeling</option>
-          <option value="Planten">Planten en kieming</option>
-          <option value="Fotosynthese">Fotosynthese</option>
-          <option value="Voortplanting planten">Voortplanting planten</option>
-          <option value="Metamorfose">Metamorfose</option>
-          <option value="Aanpassingen">Aanpassingen</option>
-          <option value="Mens">Menselijke ontwikkeling</option>
-          <option value="Toetsvraag">Toetsvragen</option>
-        </select>
-      </label>
-
-      <label>
-        Tijd
-        <select id="moeilijkheid">
-          <option value="rustig">Rustig – 35 seconden</option>
-          <option value="normaal" selected>Normaal – 22 seconden</option>
-          <option value="snel">Snel – 12 seconden</option>
-        </select>
-      </label>
-
-      <label>
-        Vraagsoort
-        <select id="vraagSoort">
-          <option value="Alles">Begrippen en toetsvragen</option>
-          <option value="Begrip">Alleen begrippen</option>
-          <option value="Toetsvraag">Alleen toetsvragen</option>
-        </select>
-      </label>
-
-      <label>
-        Voorlezen
-        <select id="automatischVoorlezen">
-          <option value="ja">Automatisch voorlezen</option>
-          <option value="nee">Niet automatisch</option>
-        </select>
-      </label>
-    </div>
-
-    <div class="knoppenrij">
-      <button class="hoofdknop" onclick="startQuiz()">▶ Start quiz</button>
-      <button class="tweede-knop" onclick="startFlitskaarten()">🗂️ Flitskaarten</button>
-    </div>
-  </div>
-</section>
-
-<section id="quizScherm" class="verborgen">
-  <div class="spelstatus">
-    <div class="statusvak"><small>Speler</small><span id="spelerNaam">Speler</span></div>
-    <div class="statusvak"><small>Vraag</small><span id="vraagNummer">1/10</span></div>
-    <div class="statusvak"><small>Score</small>⭐ <span id="score">0</span></div>
-    <div class="statusvak"><small>Munten</small>🪙 <span id="munten">0</span></div>
-    <div class="statusvak"><small>Tijd en levens</small><span id="timer">22</span>s · <span id="levens">❤️❤️❤️</span></div>
-  </div>
-
-  <div class="voortgang">
-    <div id="voortgangBalk" class="voortgang-balk"></div>
-  </div>
-
-  <div class="kaart">
-    <span id="categorie" class="categorie"></span>
-    <h2 id="vraagTekst"></h2>
-
-    <div class="vraag-acties">
-      <button class="tweede-knop" onclick="leesZichtbareVraagVoor()">🔊 Lees opnieuw</button>
-      <button class="tweede-knop" onclick="stopVoorlezen()">⏹ Stop stem</button>
-    </div>
-
-    <div id="antwoorden" class="antwoorden"></div>
-    <div id="feedback" class="feedback verborgen"></div>
-
-    <button id="volgendeKnop" class="hoofdknop volgende verborgen"
-            onclick="volgendeVraag()">
-      Volgende vraag →
-    </button>
-  </div>
-</section>
-
-<section id="eindScherm" class="verborgen">
-  <div class="kaart eindkaart">
-    <div id="eindIcoon" class="trofee">🏆</div>
-    <h2 id="eindTitel"></h2>
-    <p id="eindTekst"></p>
-
-    <div class="eindscore"><span id="eindScore">0</span> punten</div>
-
-    <div class="statistieken">
-      <div class="statistiek"><strong id="eindGoed">0</strong>Goed</div>
-      <div class="statistiek"><strong id="eindFout">0</strong>Fout</div>
-      <div class="statistiek"><strong id="eindMunten">0</strong>Munten</div>
-    </div>
-
-    <div class="knoppenrij">
-      <button class="hoofdknop" onclick="startQuiz()">🔄 Opnieuw</button>
-      <button class="tweede-knop" onclick="naarStart()">🏠 Startscherm</button>
-    </div>
-  </div>
-</section>
-
-<section id="flitsScherm" class="verborgen">
-  <div class="kaart">
-    <div class="bovenbalk">
-      <div>
-        <span class="categorie">Oefenmodus</span>
-        <h2>Flitskaarten</h2>
+        <div class="topscore">
+          🏆 Topscore: <span id="topscore">0</span>
+        </div>
       </div>
-      <strong id="flitsTeller"></strong>
-    </div>
+    </header>
 
-    <div class="flitskaart" onclick="draaiFlitskaart()">
-      <div id="flitsBinnenkant" class="flits-binnenkant">
-        <div class="flits-voor">
-          <div>
-            <div id="flitsTerm" class="flits-term"></div>
-            <p>Klik om het antwoord te bekijken.</p>
+    <!-- STARTSCHERM -->
+    <section id="startScherm">
+      <div class="kaart intro">
+        <div class="intro-icoon">🧬</div>
+
+        <h2>Planten, dieren en levenskenmerken</h2>
+
+        <p>
+          Oefen de volledige leerstof met willekeurige begripsvragen,
+          inzichtvragen, toetsvragen en flitskaarten.
+        </p>
+
+        <div class="infobalk">
+          <div class="infovak">
+            <strong>Stoffen opnemen en afgeven</strong>
+            Ademhalen, voeden en uitscheiden.
+          </div>
+
+          <div class="infovak">
+            <strong>Reageren op de omgeving</strong>
+            Waarnemen en bewegen.
+          </div>
+
+          <div class="infovak">
+            <strong>Voortbestaan</strong>
+            Voortplanten en groeien.
           </div>
         </div>
-        <div class="flits-achter">
-          <div id="flitsUitleg" class="flits-uitleg"></div>
+
+        <div class="instellingen">
+          <label>
+            Naam
+            <input
+              id="naam"
+              maxlength="20"
+              placeholder="Vul je naam in"
+            >
+          </label>
+
+          <label>
+            Spelmodus
+            <select id="spelmodus">
+              <option value="oefenen">Oefenen met uitleg</option>
+              <option value="toets">Toetsmodus</option>
+            </select>
+          </label>
+
+          <label>
+            Aantal vragen
+            <select id="aantalVragen">
+              <option value="10">10 vragen</option>
+              <option value="20" selected>20 vragen</option>
+              <option value="30">30 vragen</option>
+              <option value="50">50 vragen</option>
+              <option value="999">Alle vragen</option>
+            </select>
+          </label>
+
+          <label>
+            Onderwerp
+            <select id="categorieKeuze">
+              <option value="Alles">Alles door elkaar</option>
+              <option value="Levenskenmerken">Levenskenmerken</option>
+              <option value="Stoffen opnemen en afgeven">
+                Stoffen opnemen en afgeven
+              </option>
+              <option value="Reageren op de omgeving">
+                Reageren op de omgeving
+              </option>
+              <option value="Voortbestaan">Voortbestaan</option>
+              <option value="Zaad en kieming">Zaad en kieming</option>
+              <option value="Groei en ontwikkeling">
+                Groei en ontwikkeling
+              </option>
+              <option value="Pinguïn">Pinguïn</option>
+              <option value="Lieveheersbeestje">
+                Lieveheersbeestje
+              </option>
+              <option value="Vlinder">Vlinder</option>
+              <option value="Kikker">Kikker</option>
+            </select>
+          </label>
+
+          <label>
+            Vraagsoort
+            <select id="vraagSoort">
+              <option value="Alles">Alles</option>
+              <option value="Begrip">Begrippen</option>
+              <option value="Toepassing">Toepassingsvragen</option>
+              <option value="Toetsvraag">Toetsvragen</option>
+            </select>
+          </label>
+
+          <label>
+            Moeilijkheid
+            <select id="niveauKeuze">
+              <option value="Alles">Alle niveaus</option>
+              <option value="1">Makkelijk</option>
+              <option value="2">Gemiddeld</option>
+              <option value="3">Moeilijk</option>
+            </select>
+          </label>
+
+          <label>
+            Tijd per vraag
+            <select id="tijdKeuze">
+              <option value="0">Geen tijdslimiet</option>
+              <option value="35">35 seconden</option>
+              <option value="22" selected>22 seconden</option>
+              <option value="12">12 seconden</option>
+            </select>
+          </label>
+
+          <label>
+            Automatisch voorlezen
+            <select id="automatischVoorlezen">
+              <option value="ja">Ja</option>
+              <option value="nee">Nee</option>
+            </select>
+          </label>
+
+          <label>
+            Levens
+            <select id="levensKeuze">
+              <option value="3">3 levens</option>
+              <option value="5">5 levens</option>
+              <option value="999">Onbeperkt</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="knoppenrij">
+          <button class="hoofdknop" onclick="startQuiz()">
+            ▶ Start quiz
+          </button>
+
+          <button class="tweede-knop" onclick="startFlitskaarten()">
+            🗂️ Flitskaarten
+          </button>
+
+          <button class="tweede-knop" onclick="oefenFouten()">
+            🔁 Oefen mijn fouten
+          </button>
+
+          <button class="gevaar-knop" onclick="wisFouten()">
+            🗑️ Wis foutenlijst
+          </button>
+        </div>
+
+        <p id="foutenInfo"></p>
+      </div>
+    </section>
+
+    <!-- QUIZSCHERM -->
+    <section id="quizScherm" class="verborgen">
+      <div class="spelstatus">
+        <div class="statusvak">
+          <small>Speler</small>
+          <span id="spelerNaam">Speler</span>
+        </div>
+
+        <div class="statusvak">
+          <small>Modus</small>
+          <span id="modusTekst">Oefenen</span>
+        </div>
+
+        <div class="statusvak">
+          <small>Vraag</small>
+          <span id="vraagNummer">1/20</span>
+        </div>
+
+        <div class="statusvak">
+          <small>Score</small>
+          ⭐ <span id="score">0</span>
+        </div>
+
+        <div class="statusvak">
+          <small>Munten</small>
+          🪙 <span id="munten">0</span>
+        </div>
+
+        <div class="statusvak">
+          <small>Tijd en levens</small>
+          <span id="timer">22</span>
+          <span id="secondeTekst">s · </span>
+          <span id="levens">❤️❤️❤️</span>
         </div>
       </div>
-    </div>
 
-    <div class="flitsbediening">
-      <button class="tweede-knop" onclick="vorigeFlitskaart()">← Vorige</button>
-      <button class="tweede-knop" onclick="leesFlitskaartVoor()">🔊 Voorlezen</button>
-      <button class="hoofdknop" onclick="volgendeFlitskaart()">Volgende →</button>
-    </div>
+      <div class="voortgang">
+        <div id="voortgangBalk" class="voortgang-balk"></div>
+      </div>
 
-    <div class="knoppenrij" style="margin-top:20px">
-      <button class="tweede-knop" onclick="naarStart()">🏠 Stoppen</button>
-    </div>
-  </div>
-</section>
+      <div class="kaart">
+        <span id="categorie" class="categorie"></span>
+        <span id="niveauLabel" class="categorie moeilijk-label"></span>
 
-<footer>BioBattle – willekeurige biologietraining</footer>
-</main>
+        <h2 id="vraagTekst"></h2>
+        <div id="contextTekst" class="context verborgen"></div>
 
-<script>
-/* =========================================================
-   VRAGENBANK
-   soort: "Begrip" of "Toetsvraag"
-   ========================================================= */
+        <div class="vraag-acties">
+          <button
+            class="tweede-knop"
+            onclick="leesZichtbareVraagVoor()"
+          >
+            🔊 Lees opnieuw
+          </button>
 
-const alleVragen = [
-/* LEVENSKENMERKEN */
-{categorie:"Levenskenmerken",soort:"Begrip",vraag:"Wat zijn levenskenmerken?",antwoorden:["Kenmerken waaraan je kunt zien dat iets leeft","Eigenschappen van alleen dieren","Onderdelen van een plant","Kenmerken van levenloze voorwerpen"],goed:0,uitleg:"Levenskenmerken zijn processen en eigenschappen waaraan je organismen herkent."},
-{categorie:"Levenskenmerken",soort:"Begrip",vraag:"Wat betekent voeden?",antwoorden:["Voedingsstoffen opnemen","Afvalstoffen verwijderen","Alleen water drinken","Nakomelingen maken"],goed:0,uitleg:"Bij voeden neemt een organisme stoffen op die nodig zijn voor energie, groei en herstel."},
-{categorie:"Levenskenmerken",soort:"Begrip",vraag:"Wat betekent ademhalen of gaswisseling?",antwoorden:["Gassen opnemen en afgeven","Voedsel kleiner maken","Alleen zuurstof maken","Afvalstoffen via urine verwijderen"],goed:0,uitleg:"Bij gaswisseling worden gassen met de omgeving uitgewisseld."},
-{categorie:"Levenskenmerken",soort:"Begrip",vraag:"Wat betekent uitscheiden?",antwoorden:["Afvalstoffen uit het lichaam verwijderen","Voedsel opnemen","Groter worden","Prikkels opmerken"],goed:0,uitleg:"Uitscheiden is het verwijderen van afvalstoffen uit het lichaam."},
-{categorie:"Levenskenmerken",soort:"Begrip",vraag:"Wat betekent waarnemen?",antwoorden:["Prikkels en veranderingen opmerken","Nieuwe organismen maken","Groter worden","Voedsel verteren"],goed:0,uitleg:"Organismen nemen prikkels waar met zintuigen of andere gevoelige structuren."},
-{categorie:"Levenskenmerken",soort:"Begrip",vraag:"Wat betekent reageren?",antwoorden:["Een reactie vertonen op een prikkel","Altijd bewegen van plaats","Alleen geluid maken","Afvalstoffen opnemen"],goed:0,uitleg:"Na het waarnemen van een prikkel kan een organisme daarop reageren."},
-{categorie:"Levenskenmerken",soort:"Begrip",vraag:"Wat betekent bewegen?",antwoorden:["Het hele organisme of delen ervan veranderen van plaats","Alleen hardlopen","Alleen groeien","Alleen ademhalen"],goed:0,uitleg:"Bij bewegen verandert een organisme of een lichaamsdeel van plaats."},
-{categorie:"Levenskenmerken",soort:"Begrip",vraag:"Wat betekent groeien?",antwoorden:["Groter en meestal zwaarder worden","Van soort veranderen","Alleen ouder worden","Stoppen met ontwikkelen"],goed:0,uitleg:"Bij groei nemen omvang en meestal massa toe."},
-{categorie:"Levenskenmerken",soort:"Begrip",vraag:"Wat betekent ontwikkelen?",antwoorden:["Veranderen in bouw, vorm of mogelijkheden","Alleen langer worden","Alleen zwaarder worden","Minder voedsel opnemen"],goed:0,uitleg:"Ontwikkeling bestaat uit veranderingen in bouw, vorm en functioneren."},
-{categorie:"Levenskenmerken",soort:"Begrip",vraag:"Wat betekent voortplanten?",antwoorden:["Nakomelingen voortbrengen","Groter worden","Afvalstoffen afgeven","Prikkels waarnemen"],goed:0,uitleg:"Door voortplanting ontstaan nakomelingen en kan de soort blijven bestaan."},
-{categorie:"Levenskenmerken",soort:"Toetsvraag",vraag:"Een plant buigt naar een raam. Welke levenskenmerken zie je?",antwoorden:["Waarnemen en reageren","Uitscheiden en voortplanten","Voeden en ademhalen","Alleen groeien"],goed:0,uitleg:"De plant neemt licht waar en reageert door naar het licht te groeien."},
-{categorie:"Levenskenmerken",soort:"Toetsvraag",vraag:"Een leerling trekt zijn hand terug van een hete pan. Welke volgorde klopt?",antwoorden:["Waarnemen en daarna reageren","Reageren en daarna waarnemen","Groeien en daarna uitscheiden","Voeden en daarna voortplanten"],goed:0,uitleg:"Eerst wordt de hitte als prikkel waargenomen en daarna volgt een reactie."},
-{categorie:"Levenskenmerken",soort:"Toetsvraag",vraag:"Een konijn eet gras. Welk levenskenmerk is dit vooral?",antwoorden:["Voeden","Uitscheiden","Voortplanten","Ontwikkelen"],goed:0,uitleg:"Het konijn neemt voedingsstoffen op."},
-{categorie:"Levenskenmerken",soort:"Toetsvraag",vraag:"Een mens plast. Welk levenskenmerk is dit?",antwoorden:["Uitscheiden","Waarnemen","Voeden","Ontwikkelen"],goed:0,uitleg:"Via urine worden afvalstoffen uit het lichaam verwijderd."},
-{categorie:"Levenskenmerken",soort:"Toetsvraag",vraag:"Een baby wordt steeds langer. Welk levenskenmerk is dit?",antwoorden:["Groeien","Reageren","Ademhalen","Uitscheiden"],goed:0,uitleg:"Langer en groter worden is groei."},
-{categorie:"Levenskenmerken",soort:"Toetsvraag",vraag:"Een kind leert fietsen. Welk levenskenmerk past het best?",antwoorden:["Ontwikkelen","Uitscheiden","Ademhalen","Voortplanten"],goed:0,uitleg:"Leren fietsen is een verandering in mogelijkheden en hoort bij ontwikkeling."},
-{categorie:"Levenskenmerken",soort:"Toetsvraag",vraag:"Een bacterie deelt zich in twee bacteriën. Welk levenskenmerk zie je?",antwoorden:["Voortplanten","Waarnemen","Uitscheiden","Groeien zonder voortplanting"],goed:0,uitleg:"Bij deling ontstaan nieuwe organismen."},
-{categorie:"Levenskenmerken",soort:"Toetsvraag",vraag:"Een slapende kat beweegt nauwelijks. Is de kat toch een organisme?",antwoorden:["Ja, zij vertoont nog andere levenskenmerken","Nee, beweging is altijd verplicht","Nee, slapende dieren zijn levenloos","Alleen als zij geluid maakt"],goed:0,uitleg:"Een organisme hoeft niet elk levenskenmerk voortdurend zichtbaar te vertonen."},
-{categorie:"Levenskenmerken",soort:"Toetsvraag",vraag:"Welke lijst bestaat alleen uit levenskenmerken?",antwoorden:["Voeden, groeien, waarnemen en voortplanten","Roesten, smelten, groeien en verdampen","Bevriezen, bewegen, smelten en groeien","Verdampen, ademhalen, roesten en waarnemen"],goed:0,uitleg:"Voeden, groeien, waarnemen en voortplanten zijn levenskenmerken."},
-{categorie:"Levenskenmerken",soort:"Toetsvraag",vraag:"Waarom is vuur geen organisme, hoewel het kan groeien en bewegen?",antwoorden:["Het vertoont niet alle levenskenmerken en bestaat niet uit levende cellen","Het is te warm","Het heeft geen kleur","Het gebruikt zuurstof"],goed:0,uitleg:"Enkele overeenkomsten zijn onvoldoende om iets een organisme te noemen."},
+          <button
+            class="tweede-knop"
+            onclick="stopVoorlezen()"
+          >
+            ⏹ Stop stem
+          </button>
+        </div>
 
-/* ORGANISMEN */
-{categorie:"Organismen",soort:"Begrip",vraag:"Wat is een organisme?",antwoorden:["Een levend wezen","Alleen een dier","Een levenloos voorwerp","Alleen een plant"],goed:0,uitleg:"Mensen, dieren, planten, schimmels en bacteriën zijn organismen."},
-{categorie:"Organismen",soort:"Begrip",vraag:"Wat betekent levenloos?",antwoorden:["Het heeft nooit geleefd","Het leeft niet meer","Het beweegt niet","Het is microscopisch klein"],goed:0,uitleg:"Levenloze dingen, zoals glas en steen, hebben nooit geleefd."},
-{categorie:"Organismen",soort:"Begrip",vraag:"Wat betekent dood?",antwoorden:["Het heeft geleefd maar vertoont geen levenskenmerken meer","Het heeft nooit geleefd","Het beweegt tijdelijk niet","Het is altijd van hout"],goed:0,uitleg:"Een dood organisme heeft vroeger geleefd."},
-{categorie:"Organismen",soort:"Toetsvraag",vraag:"Welk voorbeeld is levenloos?",antwoorden:["Een steen","Een dode vlieg","Een houten plank","Een afgevallen blad"],goed:0,uitleg:"Een steen heeft nooit geleefd. De andere voorbeelden zijn afkomstig van organismen."},
-{categorie:"Organismen",soort:"Toetsvraag",vraag:"Welk voorbeeld is dood materiaal?",antwoorden:["Een houten tafel","Een glazen vaas","Een metalen lepel","Een plastic fles"],goed:0,uitleg:"Hout is afkomstig van een boom die heeft geleefd."},
-{categorie:"Organismen",soort:"Toetsvraag",vraag:"Welke groep bestaat volledig uit organismen?",antwoorden:["Bacterie, boom en mens","Steen, water en boom","Glas, schimmel en mens","Metaal, bacterie en lucht"],goed:0,uitleg:"Een bacterie, boom en mens zijn allemaal levende organismen."},
-{categorie:"Organismen",soort:"Toetsvraag",vraag:"Is een zaad een organisme?",antwoorden:["Ja, er zit een levende kiem in","Nee, een zaad leeft nooit","Alleen als het al bladeren heeft","Alleen als het in fel licht ligt"],goed:0,uitleg:"Een levensvatbaar zaad bevat een levende kiem en kan onder goede omstandigheden kiemen."},
-{categorie:"Organismen",soort:"Toetsvraag",vraag:"Waarom is een robot geen organisme?",antwoorden:["Hij bestaat niet uit levende cellen en vertoont geen volledige levensprocessen","Hij kan bewegen","Hij gebruikt energie","Hij kan geluid maken"],goed:0,uitleg:"Geprogrammeerd gedrag is niet hetzelfde als biologische levensprocessen."},
+        <div id="antwoorden" class="antwoorden"></div>
+        <div id="feedback" class="feedback verborgen"></div>
 
-/* GROEI EN ONTWIKKELING */
-{categorie:"Groei en ontwikkeling",soort:"Begrip",vraag:"Wat is groei?",antwoorden:["Toename van grootte en meestal massa","Verandering van soort","Alleen ouder worden","Het ontstaan van nakomelingen"],goed:0,uitleg:"Bij groei wordt een organisme groter en meestal zwaarder."},
-{categorie:"Groei en ontwikkeling",soort:"Begrip",vraag:"Wat is ontwikkeling?",antwoorden:["Verandering in bouw, vorm en mogelijkheden","Alleen toename van lengte","Alleen toename van gewicht","Het stoppen van groei"],goed:0,uitleg:"Ontwikkeling omvat kwalitatieve veranderingen."},
-{categorie:"Groei en ontwikkeling",soort:"Begrip",vraag:"Wat is een levensloop?",antwoorden:["Het leven en de ontwikkeling van één organisme","De ontwikkeling van alle soorten samen","Alleen de geboorte","Een voedselketen"],goed:0,uitleg:"Een levensloop beschrijft de fasen van één individueel organisme."},
-{categorie:"Groei en ontwikkeling",soort:"Begrip",vraag:"Wat is een levenscyclus?",antwoorden:["De opeenvolgende fasen die organismen van een soort doorlopen","Alleen de volwassen fase","De route naar voedsel","Een dagelijks ritme"],goed:0,uitleg:"Een levenscyclus herhaalt zich doordat volwassen organismen nakomelingen krijgen."},
-{categorie:"Groei en ontwikkeling",soort:"Toetsvraag",vraag:"Wat is het belangrijkste verschil tussen groei en ontwikkeling?",antwoorden:["Groei is groter worden; ontwikkeling is veranderen","Er is geen verschil","Groei gebeurt alleen bij planten","Ontwikkeling gebeurt alleen bij mensen"],goed:0,uitleg:"Groei gaat over afmetingen en massa; ontwikkeling over bouw en mogelijkheden."},
-{categorie:"Groei en ontwikkeling",soort:"Toetsvraag",vraag:"Een kuiken krijgt volwassen veren. Is dit vooral groei of ontwikkeling?",antwoorden:["Ontwikkeling","Alleen groei","Uitscheiding","Voeding"],goed:0,uitleg:"De verandering van dons naar volwassen veren is een verandering in bouw."},
+        <button
+          id="volgendeKnop"
+          class="hoofdknop volgende verborgen"
+          onclick="volgendeVraag()"
+        >
+          Volgende vraag →
+        </button>
+      </div>
+    </section>
 
-/* PLANTEN EN KIEMING */
-{categorie:"Planten",soort:"Begrip",vraag:"Wat is een kiem?",antwoorden:["Het jonge plantje in een zaad","De buitenkant van een vrucht","Een stuifmeelkorrel","Een volwassen plant"],goed:0,uitleg:"De kiem bestaat uit de eerste aanleg van wortel, stengel en bladeren."},
-{categorie:"Planten",soort:"Begrip",vraag:"Wat is kieming?",antwoorden:["De ontwikkeling van een kiem tot kiemplant","Het maken van bloemen","Het ontstaan van stuifmeel","Het afsterven van een zaad"],goed:0,uitleg:"Tijdens kieming begint de kiem te groeien."},
-{categorie:"Planten",soort:"Begrip",vraag:"Wat is een kiemplant?",antwoorden:["Een jonge plant die uit een zaad ontstaat","Een plant zonder wortel","Een volwassen bloeiende plant","Een levenloze plant"],goed:0,uitleg:"Een kiemplant is de jonge plant direct na de kieming."},
-{categorie:"Planten",soort:"Toetsvraag",vraag:"Welke omstandigheden zijn meestal nodig voor kieming?",antwoorden:["Water, zuurstof en een geschikte temperatuur","Alleen zonlicht","Aarde, kunstmest en wind","Koolstofdioxide en zout"],goed:0,uitleg:"Een zaad heeft meestal water, zuurstof en een geschikte temperatuur nodig."},
-{categorie:"Planten",soort:"Toetsvraag",vraag:"Is licht voor ieder zaad noodzakelijk om te kiemen?",antwoorden:["Nee, dat verschilt per plantensoort","Ja, ieder zaad heeft fel licht nodig","Nee, zuurstof is ook nooit nodig","Alleen bij koude temperaturen"],goed:0,uitleg:"Niet alle zaden hebben licht nodig om te kiemen."},
-{categorie:"Planten",soort:"Toetsvraag",vraag:"Wat komt bij veel zaden als eerste naar buiten?",antwoorden:["Het jonge worteltje","De bloem","De vrucht","Het kroonblad"],goed:0,uitleg:"Het worteltje zorgt voor verankering en opname van water."},
-{categorie:"Planten",soort:"Toetsvraag",vraag:"Waar haalt een kiemplant eerst voedsel vandaan?",antwoorden:["Uit reservevoedsel in het zaad","Uit bloemen","Alleen uit mineralen","Uit insecten"],goed:0,uitleg:"Tot de bladeren voldoende fotosynthese uitvoeren, gebruikt de kiemplant reservevoedsel."},
-{categorie:"Planten",soort:"Toetsvraag",vraag:"Twee zaden krijgen water en warmte, maar één zaad krijgt geen zuurstof. Welk zaad kiemt waarschijnlijk?",antwoorden:["Alleen het zaad met zuurstof","Alleen het zaad zonder zuurstof","Beide altijd even goed","Geen van beide, want licht ontbreekt"],goed:0,uitleg:"Voor de verbranding en energievoorziening tijdens kieming is zuurstof nodig."},
-{categorie:"Planten",soort:"Begrip",vraag:"Wat is een belangrijke functie van wortels?",antwoorden:["Water en mineralen opnemen en de plant vastzetten","Stuifmeel maken","Licht opvangen","Vruchten verspreiden"],goed:0,uitleg:"Wortels nemen stoffen uit de bodem op en geven stevigheid."},
-{categorie:"Planten",soort:"Begrip",vraag:"Wat is een belangrijke functie van de stengel?",antwoorden:["Stevigheid geven en stoffen vervoeren","Alleen zaden maken","Water uit de lucht filteren","Stuifmeel opvangen"],goed:0,uitleg:"In de stengel lopen transportvaten."},
-{categorie:"Planten",soort:"Begrip",vraag:"Wat is een belangrijke functie van bladeren?",antwoorden:["Fotosynthese uitvoeren","De plant in de bodem vastzetten","Zaden onder de grond beschermen","Mineralen produceren"],goed:0,uitleg:"Bladeren vangen licht op en voeren fotosynthese uit."},
-{categorie:"Planten",soort:"Toetsvraag",vraag:"Waarom zijn veel bladeren breed en plat?",antwoorden:["Om veel licht op te vangen","Om diep in de grond te groeien","Om dieren af te schrikken","Om zaden te verteren"],goed:0,uitleg:"Een groot oppervlak helpt bij het opvangen van licht."},
+    <!-- EINDSCHERM -->
+    <section id="eindScherm" class="verborgen">
+      <div class="kaart eindkaart">
+        <div id="eindIcoon" class="trofee">🏆</div>
+        <h2 id="eindTitel"></h2>
+        <p id="eindTekst"></p>
 
-/* FOTOSYNTHESE */
-{categorie:"Fotosynthese",soort:"Begrip",vraag:"Welke stoffen gebruikt een plant bij fotosynthese?",antwoorden:["Water en koolstofdioxide","Glucose en zuurstof","Zuurstof en mineralen","Glucose en water"],goed:0,uitleg:"Water en koolstofdioxide zijn de grondstoffen voor fotosynthese."},
-{categorie:"Fotosynthese",soort:"Begrip",vraag:"Welke stoffen ontstaan bij fotosynthese?",antwoorden:["Glucose en zuurstof","Water en koolstofdioxide","Alleen zuurstof","Eiwit en vet"],goed:0,uitleg:"De reactie levert glucose en zuurstof op."},
-{categorie:"Fotosynthese",soort:"Begrip",vraag:"Welke energiebron gebruikt een plant voor fotosynthese?",antwoorden:["Lichtenergie","Geluidsenergie","Bewegingsenergie","Elektriciteit uit de bodem"],goed:0,uitleg:"Bladgroen vangt lichtenergie op."},
-{categorie:"Fotosynthese",soort:"Begrip",vraag:"Waar vindt fotosynthese vooral plaats?",antwoorden:["In groene plantendelen","Alleen in wortels","Alleen in bloemen","Alleen in zaden"],goed:0,uitleg:"Vooral bladeren bevatten veel bladgroenkorrels."},
-{categorie:"Fotosynthese",soort:"Begrip",vraag:"Wat is bladgroen?",antwoorden:["Een stof die licht opvangt en bladeren groen maakt","Een soort glucose","Een mineraal uit de bodem","Een afvalstof"],goed:0,uitleg:"Bladgroen of chlorofyl vangt lichtenergie op."},
-{categorie:"Fotosynthese",soort:"Toetsvraag",vraag:"Welke woordformule van fotosynthese klopt?",antwoorden:["Water + koolstofdioxide → glucose + zuurstof","Glucose + zuurstof → water + koolstofdioxide","Water + zuurstof → glucose + koolstofdioxide","Mineralen + zuurstof → licht + glucose"],goed:0,uitleg:"Met lichtenergie maakt een plant uit water en koolstofdioxide glucose en zuurstof."},
-{categorie:"Fotosynthese",soort:"Toetsvraag",vraag:"Een plant staat dagenlang in volledige duisternis. Welk proces neemt direct sterk af?",antwoorden:["Fotosynthese","Wateropname","Gaswisseling in het algemeen","Alle groei stopt onmiddellijk"],goed:0,uitleg:"Zonder licht kan geen fotosynthese plaatsvinden."},
-{categorie:"Fotosynthese",soort:"Toetsvraag",vraag:"Waarom is fotosynthese belangrijk voor dieren?",antwoorden:["Er ontstaan voedsel en zuurstof","Er ontstaan alleen mineralen","Planten maken hierdoor warmte","Dieren kunnen hierdoor zelf glucose uit licht maken"],goed:0,uitleg:"Glucose vormt de basis van voedselketens en zuurstof is nodig voor verbranding."},
-{categorie:"Fotosynthese",soort:"Toetsvraag",vraag:"Waar komt de koolstof in glucose vandaan?",antwoorden:["Uit koolstofdioxide","Uit zuurstof","Uit zonlicht","Uit mineralen"],goed:0,uitleg:"De koolstofatomen worden opgenomen in de vorm van koolstofdioxide."},
-{categorie:"Fotosynthese",soort:"Toetsvraag",vraag:"Wat kan een plant met glucose doen?",antwoorden:["Gebruiken als brandstof, bouwstof of reservestof","Alleen als afvalstof afgeven","Omzetten in zonlicht","Alleen in de wortels vernietigen"],goed:0,uitleg:"Glucose heeft meerdere functies en kan ook worden omgezet in andere organische stoffen."},
+        <div class="eindscore">
+          <span id="eindScore">0</span> punten
+        </div>
 
-/* VOORTPLANTING PLANTEN */
-{categorie:"Voortplanting planten",soort:"Begrip",vraag:"Wat is bestuiving?",antwoorden:["Het overbrengen van stuifmeel op een stempel","Het versmelten van geslachtscellen","Het kiemen van een zaad","Het ontstaan van een vrucht"],goed:0,uitleg:"Stuifmeel moet op een stempel van dezelfde plantensoort terechtkomen."},
-{categorie:"Voortplanting planten",soort:"Begrip",vraag:"Wat is bevruchting?",antwoorden:["Het versmelten van de kern van een zaadcel en eicel","Het overbrengen van stuifmeel","Het openen van een bloem","Het verspreiden van zaden"],goed:0,uitleg:"Bij bevruchting versmelten mannelijke en vrouwelijke geslachtscellen."},
-{categorie:"Voortplanting planten",soort:"Begrip",vraag:"Welk bloemdeel maakt stuifmeel?",antwoorden:["De helmknop","De stempel","Het kroonblad","Het kelkblad"],goed:0,uitleg:"De helmknop is onderdeel van een meeldraad."},
-{categorie:"Voortplanting planten",soort:"Begrip",vraag:"Welk bloemdeel vangt stuifmeel op?",antwoorden:["De stempel","De helmknop","De bloemsteel","Het kelkblad"],goed:0,uitleg:"Stuifmeel blijft aan de stempel kleven."},
-{categorie:"Voortplanting planten",soort:"Begrip",vraag:"Waar bevinden zich de zaadbeginsels?",antwoorden:["In het vruchtbeginsel","In de helmknop","In het kroonblad","In de bloemsteel"],goed:0,uitleg:"In het vruchtbeginsel liggen één of meer zaadbeginsels."},
-{categorie:"Voortplanting planten",soort:"Toetsvraag",vraag:"Waaruit ontstaat na bevruchting een zaad?",antwoorden:["Uit een zaadbeginsel","Uit een kroonblad","Uit een meeldraad","Uit een wortelhaar"],goed:0,uitleg:"Een bevrucht zaadbeginsel ontwikkelt zich tot een zaad."},
-{categorie:"Voortplanting planten",soort:"Toetsvraag",vraag:"Waaruit ontstaat bij veel planten de vrucht?",antwoorden:["Uit het vruchtbeginsel","Uit de stempel","Uit de helmknop","Uit de wortel"],goed:0,uitleg:"Het vruchtbeginsel groeit na bevruchting meestal uit tot een vrucht."},
-{categorie:"Voortplanting planten",soort:"Toetsvraag",vraag:"Waarom hebben insectenbloemen vaak geurige, opvallende kroonbladeren?",antwoorden:["Om bestuivers te lokken","Om water op te nemen","Om zuurstof te bewaren","Om wortels te beschermen"],goed:0,uitleg:"Kleur en geur helpen insecten de bloem te vinden."},
-{categorie:"Voortplanting planten",soort:"Toetsvraag",vraag:"Welk kenmerk past vaak bij een windbloem?",antwoorden:["Veel licht stuifmeel","Grote hoeveelheden nectar","Zeer opvallende kroonbladeren","Een sterke zoete geur"],goed:0,uitleg:"Windbloemen maken vaak veel licht stuifmeel dat gemakkelijk wordt meegenomen."},
-{categorie:"Voortplanting planten",soort:"Toetsvraag",vraag:"Kan bevruchting vóór bestuiving plaatsvinden?",antwoorden:["Nee, eerst moet stuifmeel op de stempel komen","Ja, altijd","Alleen bij windbloemen","Alleen zonder eicel"],goed:0,uitleg:"Bestuiving gaat vooraf aan de groei van de stuifmeelbuis en de bevruchting."},
+        <div class="statistieken">
+          <div class="statistiek">
+            <strong id="eindGoed">0</strong>
+            Goed
+          </div>
 
-/* METAMORFOSE */
-{categorie:"Metamorfose",soort:"Begrip",vraag:"Wat is metamorfose?",antwoorden:["Een sterke verandering van lichaamsbouw tijdens ontwikkeling","Alleen groter worden","Een dagelijkse verplaatsing","Het zoeken naar voedsel"],goed:0,uitleg:"Metamorfose wordt ook gedaanteverwisseling genoemd."},
-{categorie:"Metamorfose",soort:"Begrip",vraag:"Wat is een larve?",antwoorden:["Een jong dier dat vaak anders is gebouwd dan het volwassen dier","Een volwassen dier","Een onbevruchte eicel","Een dood organisme"],goed:0,uitleg:"Larven kunnen een andere bouw, leefwijze en voeding hebben dan volwassen dieren."},
-{categorie:"Metamorfose",soort:"Toetsvraag",vraag:"Wat is de juiste levenscyclus van een vlinder?",antwoorden:["Ei, rups, pop, vlinder","Ei, pop, rups, vlinder","Rups, ei, vlinder, pop","Ei, vlinder, rups, pop"],goed:0,uitleg:"Een rups verpopt zich en komt daarna als vlinder uit de pop."},
-{categorie:"Metamorfose",soort:"Toetsvraag",vraag:"Wat gebeurt vooral in het popstadium van een vlinder?",antwoorden:["De lichaamsbouw wordt sterk omgevormd","De volwassen vlinder legt eieren","De rups verandert niet","Het dier neemt vooral veel voedsel op"],goed:0,uitleg:"In de pop ontstaat uit de larvale bouw de volwassen bouw."},
-{categorie:"Metamorfose",soort:"Begrip",vraag:"Hoe heet de larve van een kikker?",antwoorden:["Kikkervisje","Rups","Nimf","Pop"],goed:0,uitleg:"Een kikkervisje wordt ook dikkopje genoemd."},
-{categorie:"Metamorfose",soort:"Toetsvraag",vraag:"Waarmee ademt een jong kikkervisje vooral?",antwoorden:["Met kieuwen","Met longen","Met luchtzakken","Met veren"],goed:0,uitleg:"Een jong kikkervisje leeft in water en gebruikt kieuwen."},
-{categorie:"Metamorfose",soort:"Toetsvraag",vraag:"Welke veranderingen vinden plaats als een kikkervisje een kikker wordt?",antwoorden:["Er ontstaan poten en longen en de staart verdwijnt","Er ontstaan veren en vleugels","De poten verdwijnen","De longen worden kieuwen"],goed:0,uitleg:"De bouw wordt aangepast aan een leven op het land en in het water."},
-{categorie:"Metamorfose",soort:"Toetsvraag",vraag:"Waarom eten een rups en een vlinder vaak verschillend voedsel?",antwoorden:["Hun lichaamsbouw en levensfase verschillen","Een vlinder is geen organisme","Een rups heeft geen mond","Een vlinder voert geen levensprocessen uit"],goed:0,uitleg:"Larve en volwassen dier hebben vaak verschillende functies en aangepaste monddelen."},
+          <div class="statistiek">
+            <strong id="eindFout">0</strong>
+            Fout
+          </div>
 
-/* AANPASSINGEN */
-{categorie:"Aanpassingen",soort:"Begrip",vraag:"Wat is een aanpassing?",antwoorden:["Een kenmerk dat overleving of voortplanting bevordert","Een tijdelijke emotie","Een ziekte","Elke beweging"],goed:0,uitleg:"Aanpassingen helpen organismen functioneren in hun leefomgeving."},
-{categorie:"Aanpassingen",soort:"Begrip",vraag:"Wat is camouflage?",antwoorden:["Een aanpassing waardoor een organisme minder opvalt","Het maken van veel geluid","Het wisselen van voedsel","Een winterslaap"],goed:0,uitleg:"Camouflage helpt bij verbergen voor vijanden of prooien."},
-{categorie:"Aanpassingen",soort:"Toetsvraag",vraag:"Waarom hebben watervogels vaak zwemvliezen?",antwoorden:["Om beter door water te bewegen","Om beter te ruiken","Om voedsel te verteren","Om zuurstof te maken"],goed:0,uitleg:"Zwemvliezen vergroten het oppervlak waarmee water wordt weggeduwd."},
-{categorie:"Aanpassingen",soort:"Toetsvraag",vraag:"Waarom heeft een ijsbeer een dikke vetlaag?",antwoorden:["Voor isolatie en energiereserve","Om sneller te vliegen","Om licht op te vangen","Om zuurstof te produceren"],goed:0,uitleg:"Vet beperkt warmteverlies en kan energie opslaan."},
-{categorie:"Aanpassingen",soort:"Toetsvraag",vraag:"Welke snavel past het best bij een roofvogel?",antwoorden:["Een scherpe haaksnavel","Een platte zeefsnavel","Een lange dunne nectarsnavel","Een brede zachte snavel"],goed:0,uitleg:"Met een haaksnavel kan een roofvogel vlees afscheuren."},
-{categorie:"Aanpassingen",soort:"Toetsvraag",vraag:"Waarom heeft een eend een platte zeefsnavel?",antwoorden:["Om voedsel uit water te zeven","Om vlees af te scheuren","Om gaten in bomen te hakken","Om nectar op te zuigen"],goed:0,uitleg:"De snavel is aangepast aan het verzamelen van voedsel uit water."},
-{categorie:"Aanpassingen",soort:"Toetsvraag",vraag:"Waarom heeft een woestijnvos grote oren?",antwoorden:["Om veel warmte af te geven","Om water op te slaan","Om licht op te vangen","Om sneller te zwemmen"],goed:0,uitleg:"Grote oren hebben een groot oppervlak waardoor warmte kan worden afgegeven."},
-{categorie:"Aanpassingen",soort:"Toetsvraag",vraag:"Waarom hebben pooldieren vaak kleine oren?",antwoorden:["Om warmteverlies te beperken","Om harder te kunnen horen","Om water op te slaan","Om voedsel te zeven"],goed:0,uitleg:"Een kleiner oppervlak beperkt warmteverlies."},
+          <div class="statistiek">
+            <strong id="eindMunten">0</strong>
+            Munten
+          </div>
 
-/* MENS */
-{categorie:"Mens",soort:"Begrip",vraag:"Waar begint de ontwikkeling van een mens?",antwoorden:["Bij een bevruchte eicel","Bij de geboorte","In de puberteit","Bij de eerste tand"],goed:0,uitleg:"De ontwikkeling begint bij de bevruchting."},
-{categorie:"Mens",soort:"Begrip",vraag:"Hoe heet het ongeboren kind in de eerste ontwikkelingsfase?",antwoorden:["Embryo","Larve","Nimf","Kiemzaad"],goed:0,uitleg:"In de embryonale fase worden de organen aangelegd."},
-{categorie:"Mens",soort:"Begrip",vraag:"Hoe heet het ongeboren kind na de embryonale fase?",antwoorden:["Foetus","Larve","Pop","Kiem"],goed:0,uitleg:"Tijdens de foetale fase groeien en rijpen de organen verder."},
-{categorie:"Mens",soort:"Begrip",vraag:"Wat is de puberteit?",antwoorden:["De periode waarin het lichaam geslachtsrijp wordt","De babytijd","De periode waarin alle groei stopt","De embryonale fase"],goed:0,uitleg:"Hormonen veroorzaken tijdens de puberteit lichamelijke en geestelijke veranderingen."},
-{categorie:"Mens",soort:"Begrip",vraag:"Wat zijn secundaire geslachtskenmerken?",antwoorden:["Kenmerken die vooral tijdens de puberteit ontstaan","Geslachtsorganen die bij geboorte aanwezig zijn","Alle aangeleerde eigenschappen","Alleen veranderingen in lengte"],goed:0,uitleg:"Voorbeelden zijn borstontwikkeling, baardgroei en een lagere stem."},
-{categorie:"Mens",soort:"Toetsvraag",vraag:"Wat is een groeispurt?",antwoorden:["Een periode van snelle groei","Een periode zonder groei","Het ontstaan van een embryo","Het verdwijnen van hormonen"],goed:0,uitleg:"Veel jongeren groeien tijdens de puberteit tijdelijk extra snel."},
-{categorie:"Mens",soort:"Toetsvraag",vraag:"Welke volgorde van levensfasen klopt?",antwoorden:["Baby, peuter, kleuter, schoolkind, puber, volwassene","Peuter, baby, puber, kleuter, volwassene","Baby, volwassene, kleuter, puber","Embryo, volwassene, baby, peuter"],goed:0,uitleg:"De fasen volgen elkaar van jong naar oud op."},
-{categorie:"Mens",soort:"Toetsvraag",vraag:"Welke verandering is een secundair geslachtskenmerk?",antwoorden:["Baardgroei","Het ontstaan van teelballen vóór de geboorte","Het ontstaan van eierstokken vóór de geboorte","Het hebben van een navel"],goed:0,uitleg:"Baardgroei ontstaat onder invloed van hormonen tijdens de puberteit."}
-];
+          <div class="statistiek">
+            <strong id="eindPercentage">0%</strong>
+            Resultaat
+          </div>
+        </div>
 
-/* =========================================================
-   SPELVARIABELEN
-   ========================================================= */
+        <div id="categorieResultaten" class="resultaatlijst"></div>
 
-let quizVragen=[];
-let huidigeIndex=0;
-let score=0;
-let munten=0;
-let levens=3;
-let goedAantal=0;
-let foutAantal=0;
-let beantwoord=false;
-let timerId=null;
-let resterendeTijd=22;
-let tijdPerVraag=22;
-let zichtbareAntwoorden=[];
-let flitskaarten=[];
-let huidigeFlits=0;
-let voorlezenAan=true;
-let nederlandseStem=null;
+        <div class="knoppenrij">
+          <button class="hoofdknop" onclick="startQuiz()">
+            🔄 Opnieuw
+          </button>
 
-/* =========================================================
-   SPRAAK
-   ========================================================= */
+          <button class="tweede-knop" onclick="oefenFouten()">
+            🔁 Oefen fouten
+          </button>
 
-function spraakBeschikbaar(){
-  return "speechSynthesis" in window &&
-         "SpeechSynthesisUtterance" in window;
-}
+          <button class="tweede-knop" onclick="naarStart()">
+            🏠 Startscherm
+          </button>
+        </div>
+      </div>
+    </section>
 
-function laadStemmen(){
-  if(!spraakBeschikbaar()) return;
-  const stemmen=window.speechSynthesis.getVoices();
+    <!-- FLITSKAARTEN -->
+    <section id="flitsScherm" class="verborgen">
+      <div class="kaart">
+        <div class="bovenbalk">
+          <div>
+            <span class="categorie">Oefenmodus</span>
+            <h2>Flitskaarten</h2>
+          </div>
 
-  nederlandseStem=
-    stemmen.find(s=>s.lang.toLowerCase()==="nl-nl") ||
-    stemmen.find(s=>s.lang.toLowerCase().startsWith("nl")) ||
-    null;
-}
+          <strong id="flitsTeller"></strong>
+        </div>
 
-laadStemmen();
-if(spraakBeschikbaar()) window.speechSynthesis.onvoiceschanged=laadStemmen;
+        <div class="flitskaart" onclick="draaiFlitskaart()">
+          <div id="flitsBinnenkant" class="flits-binnenkant">
+            <div class="flits-voor">
+              <div>
+                <div id="flitsCategorie" class="categorie"></div>
+                <div id="flitsTerm" class="flits-term"></div>
+                <p>Klik om de uitleg te bekijken.</p>
+              </div>
+            </div>
 
-function spreekUit(tekst,forceer=false){
-  if((!voorlezenAan&&!forceer)||!tekst||!spraakBeschikbaar()) return;
+            <div class="flits-achter">
+              <div id="flitsUitleg" class="flits-uitleg"></div>
+            </div>
+          </div>
+        </div>
 
-  window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(tekst);
-  u.lang="nl-NL";
-  u.rate=.9;
-  u.pitch=1;
-  if(nederlandseStem) u.voice=nederlandseStem;
-  window.speechSynthesis.speak(u);
-}
+        <div class="flitsbediening">
+          <button class="tweede-knop" onclick="vorigeFlitskaart()">
+            ← Vorige
+          </button>
 
-function stopVoorlezen(){
-  if(spraakBeschikbaar()) window.speechSynthesis.cancel();
-}
+          <button class="tweede-knop" onclick="schudFlitskaarten()">
+            🔀 Schud
+          </button>
 
-function wisselVoorlezen(){
-  voorlezenAan=!voorlezenAan;
-  stopVoorlezen();
+          <button class="tweede-knop" onclick="leesFlitskaartVoor()">
+            🔊 Voorlezen
+          </button>
 
-  document.getElementById("voorleesKnop").textContent=
-    voorlezenAan ? "🔊 Voorlezen: aan" : "🔇 Voorlezen: uit";
+          <button class="hoofdknop" onclick="volgendeFlitskaart()">
+            Volgende →
+          </button>
+        </div>
 
-  if(voorlezenAan) spreekUit("Voorlezen staat aan.");
-}
+        <div class="knoppenrij" style="margin-top:20px">
+          <button class="tweede-knop" onclick="naarStart()">
+            🏠 Stoppen
+          </button>
+        </div>
+      </div>
+    </section>
 
-function leesZichtbareVraagVoor(){
-  const v=quizVragen[huidigeIndex];
-  if(!v) return;
+    <footer>
+      BioBattle – interactief biologieleerspel
+    </footer>
+  </main>
 
-  const tekst=zichtbareAntwoorden
-    .map((a,i)=>`Antwoord ${i+1}: ${a.tekst}.`)
-    .join(" ");
+  <script>
+    /*
+    ==========================================================
+    VRAGENBANK
+    ==========================================================
+    soort: Begrip, Toepassing of Toetsvraag
+    niveau: 1 = makkelijk, 2 = gemiddeld, 3 = moeilijk
+    */
 
-  spreekUit(`${v.vraag}. ${tekst}`,true);
-}
+    const alleVragen = [
+      // ======================================================
+      // LEVENSKENMERKEN ALGEMEEN
+      // ======================================================
+      {
+        id: "lev01",
+        categorie: "Levenskenmerken",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat zijn levenskenmerken?",
+        antwoorden: [
+          "Kenmerken en processen waaraan je kunt zien dat iets leeft",
+          "Eigenschappen van alleen dieren",
+          "Onderdelen van een plant",
+          "Kenmerken van levenloze voorwerpen"
+        ],
+        goed: 0,
+        uitleg:
+          "Levenskenmerken zijn kenmerken en processen waaraan je organismen kunt herkennen."
+      },
+      {
+        id: "lev02",
+        categorie: "Levenskenmerken",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Welke lijst bevat alle zeven levenskenmerken uit deze lesstof?",
+        antwoorden: [
+          "Ademhalen, voeden, uitscheiden, waarnemen, bewegen, voortplanten en groeien",
+          "Ademhalen, slapen, eten, drinken, lopen, denken en groeien",
+          "Voeden, roesten, uitscheiden, smelten, bewegen, groeien en verdampen",
+          "Waarnemen, ontwikkelen, slapen, bewegen, eten, drinken en spelen"
+        ],
+        goed: 0,
+        uitleg:
+          "De zeven levenskenmerken zijn ademhalen, voeden, uitscheiden, waarnemen, bewegen, voortplanten en groeien."
+      },
+      {
+        id: "lev03",
+        categorie: "Levenskenmerken",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Waarom hoeft een organisme niet ieder levenskenmerk voortdurend zichtbaar te vertonen?",
+        antwoorden: [
+          "Een organisme kan tijdelijk rusten, terwijl andere levensprocessen doorgaan",
+          "Levenskenmerken gelden alleen overdag",
+          "Alleen volwassen organismen hebben levenskenmerken",
+          "Een organisme heeft altijd maar één levenskenmerk"
+        ],
+        goed: 0,
+        uitleg:
+          "Een slapend dier beweegt bijvoorbeeld weinig, maar het ademt nog steeds en andere levensprocessen gaan door."
+      },
+      {
+        id: "lev04",
+        categorie: "Levenskenmerken",
+        soort: "Toepassing",
+        niveau: 3,
+        context:
+          "Vuur kan groter worden, zuurstof gebruiken en zich verspreiden.",
+        vraag: "Waarom noemen biologen vuur toch geen organisme?",
+        antwoorden: [
+          "Vuur bestaat niet uit levende cellen en vertoont niet alle levenskenmerken",
+          "Vuur is te warm om te leven",
+          "Vuur kan niet bewegen",
+          "Vuur heeft geen kleur"
+        ],
+        goed: 0,
+        uitleg:
+          "Een paar overeenkomsten met levenskenmerken zijn niet genoeg. Vuur bestaat niet uit levende cellen en heeft geen volledige biologische levensprocessen."
+      },
+      {
+        id: "lev05",
+        categorie: "Levenskenmerken",
+        soort: "Toepassing",
+        niveau: 2,
+        vraag: "Een slapend konijn beweegt bijna niet. Is het nog steeds een organisme?",
+        antwoorden: [
+          "Ja, het ademt en andere levensprocessen gaan door",
+          "Nee, want bewegen is altijd verplicht",
+          "Alleen als het wakker wordt",
+          "Nee, een slapend dier is tijdelijk levenloos"
+        ],
+        goed: 0,
+        uitleg:
+          "Een organisme hoeft niet ieder levenskenmerk op ieder moment zichtbaar te vertonen."
+      },
 
-/* =========================================================
-   HULPFUNCTIES
-   ========================================================= */
+      // ======================================================
+      // STOFFEN OPNEMEN EN AFGEVEN
+      // ======================================================
+      {
+        id: "stof01",
+        categorie: "Stoffen opnemen en afgeven",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Welke drie levenskenmerken horen bij het opnemen en afgeven van stoffen?",
+        antwoorden: [
+          "Ademhalen, voeden en uitscheiden",
+          "Waarnemen, bewegen en groeien",
+          "Groeien, voortplanten en bewegen",
+          "Voeden, waarnemen en voortplanten"
+        ],
+        goed: 0,
+        uitleg:
+          "Ademhalen, voeden en uitscheiden hebben te maken met stoffen die het lichaam binnenkomen of verlaten."
+      },
+      {
+        id: "stof02",
+        categorie: "Stoffen opnemen en afgeven",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat betekent ademhalen als levenskenmerk?",
+        antwoorden: [
+          "Gassen opnemen en afgeven",
+          "Alleen lucht door de neus zuigen",
+          "Voedsel opnemen",
+          "Afvalstoffen via urine verwijderen"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij ademhalen of gaswisseling neemt een organisme gassen op en geeft het gassen af."
+      },
+      {
+        id: "stof03",
+        categorie: "Stoffen opnemen en afgeven",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat betekent voeden in de biologie?",
+        antwoorden: [
+          "Stoffen opnemen die nodig zijn om in leven te blijven",
+          "Alleen vast voedsel eten",
+          "Alleen water drinken",
+          "Afvalstoffen verwijderen"
+        ],
+        goed: 0,
+        uitleg:
+          "Voeden omvat het opnemen van stoffen, bijvoorbeeld door te eten en te drinken."
+      },
+      {
+        id: "stof04",
+        categorie: "Stoffen opnemen en afgeven",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat betekent uitscheiden?",
+        antwoorden: [
+          "Stoffen aan de omgeving afgeven",
+          "Voedsel opnemen",
+          "Zuurstof opnemen",
+          "Nakomelingen krijgen"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij uitscheiden geeft een organisme stoffen of afvalstoffen af aan de omgeving."
+      },
+      {
+        id: "stof05",
+        categorie: "Stoffen opnemen en afgeven",
+        soort: "Toepassing",
+        niveau: 1,
+        vraag: "Welk levenskenmerk vertoon je wanneer je drinkt?",
+        antwoorden: [
+          "Voeden",
+          "Uitscheiden",
+          "Waarnemen",
+          "Voortplanten"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij drinken neem je water op. Dat valt onder voeden."
+      },
+      {
+        id: "stof06",
+        categorie: "Stoffen opnemen en afgeven",
+        soort: "Toepassing",
+        niveau: 1,
+        vraag: "Welk levenskenmerk vertoon je wanneer je plast?",
+        antwoorden: [
+          "Uitscheiden",
+          "Voeden",
+          "Groeien",
+          "Waarnemen"
+        ],
+        goed: 0,
+        uitleg:
+          "Met urine geeft het lichaam water en afvalstoffen af."
+      },
+      {
+        id: "stof07",
+        categorie: "Stoffen opnemen en afgeven",
+        soort: "Toepassing",
+        niveau: 1,
+        vraag: "Welke stof komt je lichaam binnen wanneer je inademt?",
+        antwoorden: [
+          "Zuurstof",
+          "Urine",
+          "Ontlasting",
+          "Zweet"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij het inademen komt onder andere zuurstof het lichaam binnen."
+      },
+      {
+        id: "stof08",
+        categorie: "Stoffen opnemen en afgeven",
+        soort: "Toepassing",
+        niveau: 2,
+        vraag: "Welke gebeurtenis is zowel ademhalen als het afgeven van stoffen?",
+        antwoorden: [
+          "Uitademen",
+          "Eten",
+          "Drinken",
+          "Groeien"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij uitademen geeft het lichaam gassen, waaronder koolstofdioxide, af aan de omgeving."
+      },
+      {
+        id: "stof09",
+        categorie: "Stoffen opnemen en afgeven",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Welke combinatie beschrijft twee stoffen die het lichaam kan opnemen?",
+        antwoorden: [
+          "Water en zuurstof",
+          "Urine en zweet",
+          "Ontlasting en koolstofdioxide",
+          "Zweet en urine"
+        ],
+        goed: 0,
+        uitleg:
+          "Water wordt opgenomen door te drinken en zuurstof door in te ademen."
+      },
+      {
+        id: "stof10",
+        categorie: "Stoffen opnemen en afgeven",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Welke combinatie beschrijft twee manieren waarop het lichaam stoffen afgeeft?",
+        antwoorden: [
+          "Uitademen en plassen",
+          "Eten en drinken",
+          "Inademen en drinken",
+          "Waarnemen en bewegen"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij uitademen en plassen verlaten stoffen het lichaam."
+      },
+      {
+        id: "stof11",
+        categorie: "Stoffen opnemen en afgeven",
+        soort: "Toetsvraag",
+        niveau: 3,
+        context:
+          "Een leerling zegt: 'Uitscheiden betekent alleen poepen en plassen.'",
+        vraag: "Waarom is die uitspraak niet volledig?",
+        antwoorden: [
+          "Ook bij bijvoorbeeld uitademen en zweten worden stoffen afgegeven",
+          "Uitscheiden betekent alleen eten",
+          "Alleen planten kunnen uitscheiden",
+          "Uitademen is hetzelfde als voeden"
+        ],
+        goed: 0,
+        uitleg:
+          "Uitscheiden betekent breed dat stoffen aan de omgeving worden afgegeven. Dat gebeurt niet alleen via urine en ontlasting."
+      },
+      {
+        id: "stof12",
+        categorie: "Stoffen opnemen en afgeven",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Waarom moeten organismen stoffen opnemen?",
+        antwoorden: [
+          "Ze gebruiken stoffen voor levensprocessen en om in leven te blijven",
+          "Alleen om zwaarder te worden",
+          "Om alle stoffen direct weer af te geven",
+          "Omdat waarnemen anders onmogelijk is"
+        ],
+        goed: 0,
+        uitleg:
+          "Stoffen zoals water, zuurstof en voedingsstoffen zijn nodig voor allerlei levensprocessen."
+      },
 
-function schud(lijst){
-  const kopie=[...lijst];
-  for(let i=kopie.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [kopie[i],kopie[j]]=[kopie[j],kopie[i]];
-  }
-  return kopie;
-}
+      // ======================================================
+      // REAGEREN OP DE OMGEVING
+      // ======================================================
+      {
+        id: "react01",
+        categorie: "Reageren op de omgeving",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Welke twee levenskenmerken horen bij reageren op de omgeving?",
+        antwoorden: [
+          "Waarnemen en bewegen",
+          "Voeden en uitscheiden",
+          "Groeien en voortplanten",
+          "Ademhalen en voeden"
+        ],
+        goed: 0,
+        uitleg:
+          "Organismen nemen veranderingen waar en kunnen daarop reageren door te bewegen."
+      },
+      {
+        id: "react02",
+        categorie: "Reageren op de omgeving",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat betekent waarnemen?",
+        antwoorden: [
+          "Veranderingen en prikkels in de omgeving opmerken",
+          "Afvalstoffen verwijderen",
+          "Voedingsstoffen opslaan",
+          "Nakomelingen krijgen"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij waarnemen merkt een organisme prikkels op, zoals licht, geluid of gevaar."
+      },
+      {
+        id: "react03",
+        categorie: "Reageren op de omgeving",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat betekent bewegen als levenskenmerk?",
+        antwoorden: [
+          "Het organisme of delen ervan veranderen van plaats",
+          "Alleen hardlopen",
+          "Alleen groter worden",
+          "Gassen opnemen en afgeven"
+        ],
+        goed: 0,
+        uitleg:
+          "Bewegen kan betekenen dat het hele organisme of een deel ervan van plaats verandert."
+      },
+      {
+        id: "react04",
+        categorie: "Reageren op de omgeving",
+        soort: "Toepassing",
+        niveau: 1,
+        context:
+          "Een konijn hoort een roofdier en vlucht zijn hol in.",
+        vraag: "Welke twee levenskenmerken zie je?",
+        antwoorden: [
+          "Waarnemen en bewegen",
+          "Voeden en uitscheiden",
+          "Groeien en voortplanten",
+          "Ademhalen en groeien"
+        ],
+        goed: 0,
+        uitleg:
+          "Het konijn neemt het gevaar waar en reageert door te bewegen."
+      },
+      {
+        id: "react05",
+        categorie: "Reageren op de omgeving",
+        soort: "Toepassing",
+        niveau: 2,
+        context:
+          "Je raakt per ongeluk een hete pan aan en trekt je hand snel terug.",
+        vraag: "Wat gebeurt er eerst?",
+        antwoorden: [
+          "Je neemt de hitte waar",
+          "Je hand beweegt zonder waarneming",
+          "Je groeit",
+          "Je plant je voort"
+        ],
+        goed: 0,
+        uitleg:
+          "Eerst wordt de hitte als prikkel waargenomen. Daarna volgt de beweging."
+      },
+      {
+        id: "react06",
+        categorie: "Reageren op de omgeving",
+        soort: "Toepassing",
+        niveau: 2,
+        vraag: "Een plant groeit in de richting van het licht. Wat laat dit zien?",
+        antwoorden: [
+          "De plant reageert op een prikkel uit de omgeving",
+          "De plant kan alleen bewegen als een dier",
+          "De plant scheidt licht uit",
+          "De plant plant zich voort"
+        ],
+        goed: 0,
+        uitleg:
+          "Licht is een prikkel. De groeirichting van de plant is een reactie."
+      },
+      {
+        id: "react07",
+        categorie: "Reageren op de omgeving",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Waarom kan een plant bewegen zonder van plaats te lopen?",
+        antwoorden: [
+          "Delen van de plant kunnen van stand of groeirichting veranderen",
+          "Planten bewegen nooit",
+          "Alle beweging is hetzelfde als lopen",
+          "Alleen wortels kunnen bewegen"
+        ],
+        goed: 0,
+        uitleg:
+          "Bewegen hoeft niet te betekenen dat het hele organisme van plaats verandert."
+      },
+      {
+        id: "react08",
+        categorie: "Reageren op de omgeving",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welke volgorde beschrijft reageren op de omgeving het best?",
+        antwoorden: [
+          "Prikkel → waarnemen → reactie of beweging",
+          "Beweging → voortplanting → prikkel",
+          "Voeden → groeien → waarnemen",
+          "Uitscheiden → ademhalen → prikkel"
+        ],
+        goed: 0,
+        uitleg:
+          "Een verandering werkt als prikkel, wordt waargenomen en kan daarna een reactie veroorzaken."
+      },
 
-function haalTopscoreOp(){
-  try{return Number(localStorage.getItem("bio-topscore"))||0;}
-  catch{return 0;}
-}
+      // ======================================================
+      // VOORTBESTAAN
+      // ======================================================
+      {
+        id: "voort01",
+        categorie: "Voortbestaan",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Welke twee levenskenmerken horen volgens deze les bij het voortbestaan?",
+        antwoorden: [
+          "Voortplanten en groeien",
+          "Waarnemen en bewegen",
+          "Ademhalen en uitscheiden",
+          "Voeden en bewegen"
+        ],
+        goed: 0,
+        uitleg:
+          "Nakomelingen ontstaan door voortplanting en groeien vervolgens op tot volwassen organismen."
+      },
+      {
+        id: "voort02",
+        categorie: "Voortbestaan",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat betekent voortplanten?",
+        antwoorden: [
+          "Nakomelingen voortbrengen",
+          "Groter worden",
+          "Afvalstoffen afgeven",
+          "Prikkels opmerken"
+        ],
+        goed: 0,
+        uitleg:
+          "Door voortplanting ontstaan nieuwe organismen van dezelfde soort."
+      },
+      {
+        id: "voort03",
+        categorie: "Voortbestaan",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat betekent groeien?",
+        antwoorden: [
+          "Groter en meestal zwaarder worden",
+          "Van soort veranderen",
+          "Alleen ouder worden",
+          "Nakomelingen krijgen"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij groei nemen de afmetingen en meestal het gewicht toe."
+      },
+      {
+        id: "voort04",
+        categorie: "Voortbestaan",
+        soort: "Toepassing",
+        niveau: 1,
+        vraag: "Waarom is voortplanting belangrijk voor een soort?",
+        antwoorden: [
+          "Daardoor blijft de soort voortbestaan",
+          "Daardoor leeft ieder individu voor altijd",
+          "Daardoor hoeft niemand te groeien",
+          "Daardoor zijn geen voedingsstoffen nodig"
+        ],
+        goed: 0,
+        uitleg:
+          "Individuele organismen sterven uiteindelijk. Door nakomelingen kan de soort blijven bestaan."
+      },
+      {
+        id: "voort05",
+        categorie: "Voortbestaan",
+        soort: "Toepassing",
+        niveau: 2,
+        context:
+          "Konijnen krijgen meerdere keren per jaar jongen. De jongen worden groter en later zelf volwassen.",
+        vraag: "Welke levenskenmerken worden vooral beschreven?",
+        antwoorden: [
+          "Voortplanten en groeien",
+          "Waarnemen en uitscheiden",
+          "Ademhalen en bewegen",
+          "Voeden en waarnemen"
+        ],
+        goed: 0,
+        uitleg:
+          "Er ontstaan jongen door voortplanting en die jongen groeien."
+      },
+      {
+        id: "voort06",
+        categorie: "Voortbestaan",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Is voortplanting noodzakelijk voor het voortbestaan van één individueel organisme?",
+        antwoorden: [
+          "Nee, maar wel voor het voortbestaan van de soort",
+          "Ja, ieder individu sterft direct zonder nakomelingen",
+          "Nee, en ook niet voor de soort",
+          "Alleen bij planten"
+        ],
+        goed: 0,
+        uitleg:
+          "Een individu kan leven zonder zich voort te planten, maar zonder voortplanting ontstaan geen nieuwe generaties."
+      },
 
-function bewaarTopscore(s){
-  try{localStorage.setItem("bio-topscore",String(s));}
-  catch{}
-}
+      // ======================================================
+      // ZAAD EN KIEMING
+      // ======================================================
+      {
+        id: "zaad01",
+        categorie: "Zaad en kieming",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat is de zaadhuid?",
+        antwoorden: [
+          "Het beschermende vlies om een zaad",
+          "De plek waar het zaad vastzat",
+          "Het jonge plantje in het zaad",
+          "De voorraad water in het zaad"
+        ],
+        goed: 0,
+        uitleg:
+          "De zaadhuid is een stevig beschermend vlies rond het zaad."
+      },
+      {
+        id: "zaad02",
+        categorie: "Zaad en kieming",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat is de navel van een bruine boon?",
+        antwoorden: [
+          "De plaats waar het zaad aan de vrucht vastzat",
+          "Het gaatje waardoor water wordt opgenomen",
+          "De kiem van de plant",
+          "Een zaadlob"
+        ],
+        goed: 0,
+        uitleg:
+          "De witte vlek op een bruine boon heet de navel. Daar zat het zaad vast aan de plant of vrucht."
+      },
+      {
+        id: "zaad03",
+        categorie: "Zaad en kieming",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat is het poortje van een zaad?",
+        antwoorden: [
+          "Een klein gaatje waardoor het zaad snel water kan opnemen",
+          "De plaats waar het zaad aan de vrucht vastzat",
+          "Het beschermende vlies",
+          "Het eerste blaadje"
+        ],
+        goed: 0,
+        uitleg:
+          "Het poortje is een heel klein gaatje in de zaadhuid."
+      },
+      {
+        id: "zaad04",
+        categorie: "Zaad en kieming",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat is de kiem?",
+        antwoorden: [
+          "Het beginsel van een nieuwe plant",
+          "Het buitenste vlies van het zaad",
+          "De plaats waar het zaad vastzat",
+          "Een volwassen wortel"
+        ],
+        goed: 0,
+        uitleg:
+          "De kiem is het jonge plantje dat zich al in het zaad bevindt."
+      },
+      {
+        id: "zaad05",
+        categorie: "Zaad en kieming",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat zijn zaadlobben?",
+        antwoorden: [
+          "Delen van het zaad waarin reservevoedsel is opgeslagen",
+          "Gaatjes in de zaadhuid",
+          "De wortels van een volwassen plant",
+          "De bloemen van een kiemplant"
+        ],
+        goed: 0,
+        uitleg:
+          "Zaadlobben bevatten voedingsstoffen die tijdens de kieming worden gebruikt."
+      },
+      {
+        id: "zaad06",
+        categorie: "Zaad en kieming",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat is kieming?",
+        antwoorden: [
+          "Het proces waarbij de kiem uitgroeit tot een kiemplant",
+          "Het ontstaan van een bloem",
+          "Het afsterven van een zaad",
+          "Het verspreiden van vruchten"
+        ],
+        goed: 0,
+        uitleg:
+          "De kieming begint wanneer het zaad water opneemt en de kiem begint te groeien."
+      },
+      {
+        id: "zaad07",
+        categorie: "Zaad en kieming",
+        soort: "Toepassing",
+        niveau: 1,
+        vraag: "Welk deel van een zaad beschermt de kiem?",
+        antwoorden: [
+          "De zaadhuid",
+          "De navel",
+          "Het poortje",
+          "De stengel"
+        ],
+        goed: 0,
+        uitleg:
+          "De zaadhuid vormt een stevig beschermend vlies rond het zaad."
+      },
+      {
+        id: "zaad08",
+        categorie: "Zaad en kieming",
+        soort: "Toepassing",
+        niveau: 1,
+        vraag: "Via welk deel kan een bruine boon snel water opnemen?",
+        antwoorden: [
+          "Het poortje",
+          "De navel",
+          "De zaadhuid zonder opening",
+          "De kiem"
+        ],
+        goed: 0,
+        uitleg:
+          "Door het kleine poortje kan water snel het zaad binnendringen."
+      },
+      {
+        id: "zaad09",
+        categorie: "Zaad en kieming",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Waarom is water nodig voor de kieming?",
+        antwoorden: [
+          "Water brengt processen in het zaad op gang",
+          "Water verandert de kiem direct in een bloem",
+          "Water vervangt al het reservevoedsel",
+          "Water voorkomt dat de kiem groeit"
+        ],
+        goed: 0,
+        uitleg:
+          "Door wateropname komen processen in het zaad op gang en kan de kiem groeien."
+      },
+      {
+        id: "zaad10",
+        categorie: "Zaad en kieming",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Waar haalt een kiemplant in het begin de meeste voedingsstoffen vandaan?",
+        antwoorden: [
+          "Uit het reservevoedsel in de zaadlobben",
+          "Uit bloemen",
+          "Uit insecten",
+          "Alleen uit zonlicht"
+        ],
+        goed: 0,
+        uitleg:
+          "De zaadlobben bevatten reservevoedsel voor de eerste groei."
+      },
+      {
+        id: "zaad11",
+        categorie: "Zaad en kieming",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Wat gebeurt er met het reservevoedsel in de zaadlobben tijdens de kieming?",
+        antwoorden: [
+          "Het wordt door het kiemplantje verbruikt",
+          "Het verandert in de zaadhuid",
+          "Het wordt volledig als afval afgegeven",
+          "Het verandert in de navel"
+        ],
+        goed: 0,
+        uitleg:
+          "Het kiemplantje gebruikt het reservevoedsel voor groei en ontwikkeling."
+      },
+      {
+        id: "zaad12",
+        categorie: "Zaad en kieming",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Welke uitspraak over de eerste zaadlobben boven de grond is juist?",
+        antwoorden: [
+          "Het zijn de twee helften van het zaad met opgeslagen voedingsstoffen",
+          "Het zijn altijd de eerste echte bloemen",
+          "Het zijn delen van de zaadhuid",
+          "Het zijn de navel en het poortje"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij een bruine boon bestaan de zaadlobben uit de twee dikke helften van het zaad."
+      },
+      {
+        id: "zaad13",
+        categorie: "Zaad en kieming",
+        soort: "Toetsvraag",
+        niveau: 3,
+        context:
+          "Een leerling verwijdert vóór de kieming beide zaadlobben van een boon.",
+        vraag: "Wat is het waarschijnlijkste gevolg?",
+        antwoorden: [
+          "De kiemplant heeft te weinig reservevoedsel voor de eerste groei",
+          "De plant neemt meer water op",
+          "De zaadhuid wordt sterker",
+          "De navel verandert in een wortel"
+        ],
+        goed: 0,
+        uitleg:
+          "De zaadlobben bevatten het reservevoedsel waarop het jonge plantje aanvankelijk is aangewezen."
+      },
+      {
+        id: "zaad14",
+        categorie: "Zaad en kieming",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welke volgorde bij de kieming van een boon is het meest logisch?",
+        antwoorden: [
+          "Wateropname → kiem groeit → worteltje verschijnt → kiemplant ontstaat",
+          "Bloem ontstaat → wateropname → zaadlobben ontstaan",
+          "Vrucht ontstaat → kiem verdwijnt → wortel sterft",
+          "Zaadhuid groeit → volwassen plant ontstaat → kiem verschijnt"
+        ],
+        goed: 0,
+        uitleg:
+          "Wateropname start de kieming. Daarna begint de kiem te groeien en ontstaat een kiemplant."
+      },
+      {
+        id: "zaad15",
+        categorie: "Zaad en kieming",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Wat is het verschil tussen de navel en het poortje?",
+        antwoorden: [
+          "De navel is de aanhechtingsplaats; het poortje neemt water op",
+          "De navel neemt water op; het poortje bevat reservevoedsel",
+          "Beide zijn precies hetzelfde deel",
+          "De navel is de kiem; het poortje is de zaadhuid"
+        ],
+        goed: 0,
+        uitleg:
+          "De navel laat zien waar het zaad vastzat. Het poortje is een kleine opening voor wateropname."
+      },
 
-document.getElementById("topscore").textContent=haalTopscoreOp();
+      // ======================================================
+      // GROEI EN ONTWIKKELING
+      // ======================================================
+      {
+        id: "groei01",
+        categorie: "Groei en ontwikkeling",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat is groei?",
+        antwoorden: [
+          "Groter en zwaarder worden",
+          "Verandering van de bouw zonder groter te worden",
+          "Nakomelingen krijgen",
+          "Stoffen afgeven"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij groei neemt de grootte en meestal ook het gewicht toe."
+      },
+      {
+        id: "groei02",
+        categorie: "Groei en ontwikkeling",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat is ontwikkeling?",
+        antwoorden: [
+          "Veranderingen in de bouw van een organisme",
+          "Alleen groter en zwaarder worden",
+          "Alleen ouder worden",
+          "Het opnemen van water"
+        ],
+        goed: 0,
+        uitleg:
+          "Ontwikkeling betekent dat de bouw, vorm of mogelijkheden veranderen."
+      },
+      {
+        id: "groei03",
+        categorie: "Groei en ontwikkeling",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat is een levenscyclus?",
+        antwoorden: [
+          "De ontwikkeling van jong tot volwassen organisme en de opeenvolgende levensfasen",
+          "Alleen de geboorte van een organisme",
+          "Een lijst met levenskenmerken",
+          "De dagelijkse beweging van een dier"
+        ],
+        goed: 0,
+        uitleg:
+          "Een levenscyclus beschrijft de opeenvolgende fasen in het leven van een organisme."
+      },
+      {
+        id: "groei04",
+        categorie: "Groei en ontwikkeling",
+        soort: "Toepassing",
+        niveau: 1,
+        vraag: "Een tomatenplant wordt hoger en zwaarder. Is dit groei of ontwikkeling?",
+        antwoorden: [
+          "Groei",
+          "Alleen ontwikkeling",
+          "Voortplanting",
+          "Uitscheiding"
+        ],
+        goed: 0,
+        uitleg:
+          "Hoger en zwaarder worden is groei."
+      },
+      {
+        id: "groei05",
+        categorie: "Groei en ontwikkeling",
+        soort: "Toepassing",
+        niveau: 1,
+        vraag: "Een tomatenplant krijgt nieuwe bladeren en vertakte wortels. Is dit groei of ontwikkeling?",
+        antwoorden: [
+          "Ontwikkeling",
+          "Alleen groei",
+          "Uitscheiding",
+          "Waarneming"
+        ],
+        goed: 0,
+        uitleg:
+          "Er ontstaan nieuwe delen en de bouw verandert. Dat is ontwikkeling."
+      },
+      {
+        id: "groei06",
+        categorie: "Groei en ontwikkeling",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Waarom kunnen vertakte wortels beter water opnemen?",
+        antwoorden: [
+          "Ze hebben contact met een groter deel van de bodem",
+          "Ze maken het poortje groter",
+          "Ze veranderen in zaadlobben",
+          "Ze hoeven geen water meer op te nemen"
+        ],
+        goed: 0,
+        uitleg:
+          "Door vertakking wordt het opnameoppervlak groter."
+      },
+      {
+        id: "groei07",
+        categorie: "Groei en ontwikkeling",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Wat is het belangrijkste verschil tussen groei en ontwikkeling?",
+        antwoorden: [
+          "Groei is groter worden; ontwikkeling is verandering van de bouw",
+          "Er is geen verschil",
+          "Groei komt alleen bij planten voor",
+          "Ontwikkeling komt alleen bij dieren voor"
+        ],
+        goed: 0,
+        uitleg:
+          "Groei gaat om afmetingen en massa. Ontwikkeling gaat om veranderingen in bouw en functioneren."
+      },
+      {
+        id: "groei08",
+        categorie: "Groei en ontwikkeling",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Waarom kan ontwikkeling ervoor zorgen dat een orgaan zijn functie beter uitvoert?",
+        antwoorden: [
+          "De bouw verandert op een manier die beter bij de functie past",
+          "Het orgaan wordt altijd alleen zwaarder",
+          "Ontwikkeling verwijdert alle delen",
+          "De levenscyclus stopt"
+        ],
+        goed: 0,
+        uitleg:
+          "Bouw en functie hangen samen. Vertakte wortels kunnen bijvoorbeeld efficiënter water opnemen."
+      },
+      {
+        id: "groei09",
+        categorie: "Groei en ontwikkeling",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Welke verandering is vooral ontwikkeling?",
+        antwoorden: [
+          "Een plant vormt bloemen",
+          "Een plant wordt twee centimeter langer",
+          "Een dier wordt honderd gram zwaarder",
+          "Een vrucht neemt alleen in massa toe"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij het vormen van bloemen verandert de bouw en ontstaat een nieuw plantendeel."
+      },
+      {
+        id: "groei10",
+        categorie: "Groei en ontwikkeling",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Kan groei plaatsvinden zonder duidelijke ontwikkeling?",
+        antwoorden: [
+          "Ja, een organisme kan tijdelijk vooral groter worden",
+          "Nee, groei en ontwikkeling zijn exact hetzelfde",
+          "Nee, groei is geen levenskenmerk",
+          "Alleen bij levenloze voorwerpen"
+        ],
+        goed: 0,
+        uitleg:
+          "Groei en ontwikkeling gaan vaak samen, maar het zijn verschillende begrippen."
+      },
 
-function toonScherm(id){
-  ["startScherm","quizScherm","eindScherm","flitsScherm"]
-    .forEach(x=>document.getElementById(x).classList.add("verborgen"));
+      // ======================================================
+      // PINGUÏN
+      // ======================================================
+      {
+        id: "pin01",
+        categorie: "Pinguïn",
+        soort: "Toepassing",
+        niveau: 1,
+        vraag: "Waar vindt bij een pinguïn vóór het uitkomen veel ontwikkeling plaats?",
+        antwoorden: [
+          "In het ei",
+          "Alleen na de volwassenheid",
+          "In de zaadlobben",
+          "In een cocon"
+        ],
+        goed: 0,
+        uitleg:
+          "In het ei ontwikkelt het jonge dier zich voordat het uitkomt."
+      },
+      {
+        id: "pin02",
+        categorie: "Pinguïn",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Waarom lijkt een pasgeboren pinguïnjong al op een volwassen pinguïn?",
+        antwoorden: [
+          "Het jong is bij de geboorte al ver ontwikkeld",
+          "Het jong heeft een popstadium gehad",
+          "Het jong heeft geen ontwikkeling doorgemaakt",
+          "Het jong is al even zwaar als een volwassen dier"
+        ],
+        goed: 0,
+        uitleg:
+          "Een groot deel van de ontwikkeling heeft al in het ei plaatsgevonden."
+      },
+      {
+        id: "pin03",
+        categorie: "Pinguïn",
+        soort: "Toepassing",
+        niveau: 1,
+        vraag: "Een pinguïnjong wordt groter en zwaarder. Welk proces is dit?",
+        antwoorden: [
+          "Groei",
+          "Metamorfose",
+          "Uitscheiding",
+          "Bestuiving"
+        ],
+        goed: 0,
+        uitleg:
+          "Een toename van grootte en gewicht is groei."
+      },
+      {
+        id: "pin04",
+        categorie: "Pinguïn",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Waarom is de ontwikkeling van een pinguïn geen metamorfose zoals bij een vlinder?",
+        antwoorden: [
+          "Het jong lijkt in bouw al sterk op het volwassen dier",
+          "Een pinguïn groeit nooit",
+          "Een pinguïn komt niet uit een ei",
+          "Een pinguïn heeft geen levenscyclus"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij metamorfose verandert de lichaamsbouw en leefwijze zeer sterk. Een pinguïnjong heeft al dezelfde algemene bouw."
+      },
+      {
+        id: "pin05",
+        categorie: "Pinguïn",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welke uitspraak over groei en ontwikkeling bij een pinguïn is juist?",
+        antwoorden: [
+          "Veel ontwikkeling gebeurt in het ei; na het uitkomen groeit het jong nog sterk",
+          "Alle ontwikkeling begint pas als de pinguïn volwassen is",
+          "Het jong ondergaat een popstadium",
+          "Het jong wordt alleen zwaarder en ontwikkelt nooit"
+        ],
+        goed: 0,
+        uitleg:
+          "De bouw is bij het uitkomen al ver ontwikkeld, maar het jong moet nog sterk groeien en verder ontwikkelen."
+      },
 
-  document.getElementById(id).classList.remove("verborgen");
-  window.scrollTo({top:0,behavior:"smooth"});
-}
+      // ======================================================
+      // LIEVEHEERSBEESTJE
+      // ======================================================
+      {
+        id: "lief01",
+        categorie: "Lieveheersbeestje",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat is een larve?",
+        antwoorden: [
+          "Een jong dier dat nog geen metamorfose heeft ondergaan",
+          "Een volwassen insect",
+          "Een ei zonder kiem",
+          "Een cocon zonder dier"
+        ],
+        goed: 0,
+        uitleg:
+          "Een larve is een jonge vorm die vaak sterk verschilt van het volwassen dier."
+      },
+      {
+        id: "lief02",
+        categorie: "Lieveheersbeestje",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat is metamorfose?",
+        antwoorden: [
+          "Verandering van lichaamsbouw en levenswijze",
+          "Alleen groter en zwaarder worden",
+          "Alleen voedsel opnemen",
+          "Het leggen van eieren"
+        ],
+        goed: 0,
+        uitleg:
+          "Metamorfose is een grote verandering in bouw en vaak ook in leefwijze."
+      },
+      {
+        id: "lief03",
+        categorie: "Lieveheersbeestje",
+        soort: "Toepassing",
+        niveau: 1,
+        vraag: "Waarmee begint de levenscyclus van een lieveheersbeestje?",
+        antwoorden: [
+          "Met een eitje",
+          "Met een volwassen kever",
+          "Met een kikkerdril",
+          "Met een zaad"
+        ],
+        goed: 0,
+        uitleg:
+          "Een lieveheersbeestje begint de levenscyclus als ei."
+      },
+      {
+        id: "lief04",
+        categorie: "Lieveheersbeestje",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Welke uitspraak over de larve van een lieveheersbeestje is juist?",
+        antwoorden: [
+          "De larve heeft geen vleugels en kan ander voedsel eten dan het volwassen dier",
+          "De larve ziet er precies hetzelfde uit als het volwassen dier",
+          "De larve is een zaad",
+          "De larve is al een imago"
+        ],
+        goed: 0,
+        uitleg:
+          "Larve en volwassen lieveheersbeestje verschillen in lichaamsbouw en kunnen ook verschillen in leefwijze."
+      },
+      {
+        id: "lief05",
+        categorie: "Lieveheersbeestje",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Waarom is de verandering van larve naar volwassen lieveheersbeestje ontwikkeling?",
+        antwoorden: [
+          "De lichaamsbouw en leefwijze veranderen",
+          "Het dier wordt alleen zwaarder",
+          "Het dier neemt alleen water op",
+          "Het dier scheidt alleen stoffen uit"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij ontwikkeling verandert de bouw. Bij metamorfose zijn die veranderingen bijzonder groot."
+      },
 
-function toonMelding(tekst){
-  const m=document.createElement("div");
-  m.className="melding";
-  m.textContent=tekst;
-  document.body.appendChild(m);
-  setTimeout(()=>m.remove(),1800);
-}
+      // ======================================================
+      // VLINDER
+      // ======================================================
+      {
+        id: "vli01",
+        categorie: "Vlinder",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Welke vier stadia doorloopt een vlinder?",
+        antwoorden: [
+          "Ei, larve, pop en imago",
+          "Ei, zaad, kiem en imago",
+          "Larve, kikker, pop en imago",
+          "Ei, larve, jong en zaad"
+        ],
+        goed: 0,
+        uitleg:
+          "De vier stadia zijn ei, larve, pop en imago."
+      },
+      {
+        id: "vli02",
+        categorie: "Vlinder",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Hoe heet de larve van een vlinder?",
+        antwoorden: [
+          "Rups",
+          "Kikkervisje",
+          "Imago",
+          "Kiem"
+        ],
+        goed: 0,
+        uitleg:
+          "De larven van vlinders worden rupsen genoemd."
+      },
+      {
+        id: "vli03",
+        categorie: "Vlinder",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Hoe heet een volwassen vlinder?",
+        antwoorden: [
+          "Imago",
+          "Larve",
+          "Pop",
+          "Cocon"
+        ],
+        goed: 0,
+        uitleg:
+          "De volwassen vorm van een insect heet het imago."
+      },
+      {
+        id: "vli04",
+        categorie: "Vlinder",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat is een cocon?",
+        antwoorden: [
+          "Een omhulsel rond het lichaam van de rups",
+          "De volwassen vlinder",
+          "Een hard pantser van een kikker",
+          "Een onderdeel van een zaad"
+        ],
+        goed: 0,
+        uitleg:
+          "De rups vormt een omhulsel om zijn lichaam. Dat omhulsel heet de cocon."
+      },
+      {
+        id: "vli05",
+        categorie: "Vlinder",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat wordt in deze leerstof bedoeld met een pop?",
+        antwoorden: [
+          "De rups met de cocon waarin de metamorfose plaatsvindt",
+          "Een volwassen vlinder",
+          "Een vlinderei",
+          "Een zaadlob"
+        ],
+        goed: 0,
+        uitleg:
+          "De rups in het omhulsel wordt de pop genoemd."
+      },
+      {
+        id: "vli06",
+        categorie: "Vlinder",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Wat betekent vervellen?",
+        antwoorden: [
+          "Het oude pantser barst open en wordt vervangen door een groter pantser",
+          "De rups verandert direct in een ei",
+          "De vlinder legt eieren",
+          "De pop begint te eten"
+        ],
+        goed: 0,
+        uitleg:
+          "Omdat het harde pantser niet kan meegroeien, moet de rups het afwerpen."
+      },
+      {
+        id: "vli07",
+        categorie: "Vlinder",
+        soort: "Toepassing",
+        niveau: 1,
+        vraag: "Waar leggen koolwitjes hun eitjes vaak?",
+        antwoorden: [
+          "Op koolbladeren",
+          "In kikkerdril",
+          "In de bodem als zaden",
+          "In het water"
+        ],
+        goed: 0,
+        uitleg:
+          "De rupsen kunnen na het uitkomen meteen van de koolbladeren eten."
+      },
+      {
+        id: "vli08",
+        categorie: "Vlinder",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Waarom vervelt een rups meerdere keren?",
+        antwoorden: [
+          "Het harde pantser kan niet meegroeien",
+          "De rups moet leren vliegen",
+          "De cocon wordt te klein",
+          "De rups verliest zijn kieuwen"
+        ],
+        goed: 0,
+        uitleg:
+          "Het pantser is hard. Om verder te groeien moet de rups een groter pantser vormen."
+      },
+      {
+        id: "vli09",
+        categorie: "Vlinder",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Wanneer kan een rups na een vervelling het snelst groeien?",
+        antwoorden: [
+          "Voordat het nieuwe pantser hard is",
+          "Wanneer het oude pantser weer dichtgaat",
+          "Alleen tijdens het eistadium",
+          "Pas wanneer hij een imago is"
+        ],
+        goed: 0,
+        uitleg:
+          "Het nieuwe pantser is eerst nog zacht en biedt tijdelijk ruimte voor snelle groei."
+      },
+      {
+        id: "vli10",
+        categorie: "Vlinder",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Wat doet een pop meestal niet?",
+        antwoorden: [
+          "Eten en actief bewegen",
+          "Een metamorfose ondergaan",
+          "Nieuwe lichaamsdelen ontwikkelen",
+          "Veranderen in lichaamsbouw"
+        ],
+        goed: 0,
+        uitleg:
+          "Een pop eet niet en beweegt meestal niet, terwijl binnenin grote veranderingen plaatsvinden."
+      },
+      {
+        id: "vli11",
+        categorie: "Vlinder",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Waar vindt de metamorfose van een koolwitje vooral plaats?",
+        antwoorden: [
+          "In de cocon tijdens het popstadium",
+          "In het ei nadat de vlinder volwassen is",
+          "Tijdens iedere vlucht",
+          "In de zaadlobben"
+        ],
+        goed: 0,
+        uitleg:
+          "In de pop wordt het lichaam van de rups omgebouwd tot dat van een vlinder."
+      },
+      {
+        id: "vli12",
+        categorie: "Vlinder",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Welke nieuwe delen ontstaan tijdens de metamorfose van rups naar vlinder?",
+        antwoorden: [
+          "Vleugels, grote ogen, roltong en voelsprieten",
+          "Kieuwen, vinnen en een staart",
+          "Zaadlobben, wortels en een stengel",
+          "Een navel en poortje"
+        ],
+        goed: 0,
+        uitleg:
+          "De volwassen vlinder krijgt lichaamsdelen die passen bij zijn andere leefwijze."
+      },
+      {
+        id: "vli13",
+        categorie: "Vlinder",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Waarom kan een pas uitgekomen vlinder niet altijd direct wegvliegen?",
+        antwoorden: [
+          "De vlinder moet eerst enkele uren opdrogen",
+          "De vlinder heeft nog kieuwen",
+          "De vlinder moet eerst vervellen tot een rups",
+          "De vlinder heeft nog geen lichaamsdelen"
+        ],
+        goed: 0,
+        uitleg:
+          "Na het uitkomen moeten de vleugels en het lichaam eerst opdrogen."
+      },
+      {
+        id: "vli14",
+        categorie: "Vlinder",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Waarom kunnen een rups en een volwassen vlinder verschillend voedsel eten?",
+        antwoorden: [
+          "Hun lichaamsbouw, monddelen en leefwijze verschillen",
+          "De rups is geen organisme",
+          "De vlinder hoeft zich nooit te voeden",
+          "De rups heeft geen mond"
+        ],
+        goed: 0,
+        uitleg:
+          "De rups is gebouwd om bladeren te eten. De volwassen vlinder heeft onder andere een roltong."
+      },
+      {
+        id: "vli15",
+        categorie: "Vlinder",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welke volgorde is juist bij het vervellen van een rups?",
+        antwoorden: [
+          "Pantser barst → rups kruipt eruit → nieuw groter pantser ontstaat",
+          "Nieuw pantser ontstaat → rups wordt een ei → oud pantser groeit",
+          "Rups wordt imago → pantser barst → cocon verdwijnt",
+          "Cocon ontstaat → rups legt eieren → pantser groeit"
+        ],
+        goed: 0,
+        uitleg:
+          "De rups verlaat het oude pantser en vormt daarna een groter nieuw pantser."
+      },
+      {
+        id: "vli16",
+        categorie: "Vlinder",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Bij welke andere insecten komen dezelfde vier hoofdstadia vaak voor?",
+        antwoorden: [
+          "Kevers, bijen, vliegen en wespen",
+          "Kikkers, vissen en pinguïns",
+          "Slakken, wormen en spinnen",
+          "Alle zoogdieren"
+        ],
+        goed: 0,
+        uitleg:
+          "Ook veel kevers, bijen, vliegen en wespen hebben een volledige metamorfose met ei, larve, pop en imago."
+      },
+      {
+        id: "vli17",
+        categorie: "Vlinder",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welke verandering is metamorfose en niet alleen groei?",
+        antwoorden: [
+          "Een rups krijgt vleugels, een roltong en voelsprieten",
+          "Een rups wordt langer",
+          "Een rups wordt zwaarder na het eten",
+          "Een vlinder droogt op"
+        ],
+        goed: 0,
+        uitleg:
+          "Bij metamorfose verandert de lichaamsbouw sterk. Langer of zwaarder worden is groei."
+      },
 
-/* =========================================================
-   QUIZ
-   ========================================================= */
+      // ======================================================
+      // KIKKER
+      // ======================================================
+      {
+        id: "kik01",
+        categorie: "Kikker",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Hoe heet de larve van een kikker?",
+        antwoorden: [
+          "Kikkervisje",
+          "Rups",
+          "Pop",
+          "Imago"
+        ],
+        goed: 0,
+        uitleg:
+          "De larve van een kikker heet een kikkervisje."
+      },
+      {
+        id: "kik02",
+        categorie: "Kikker",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Waarmee ademt een jong kikkervisje eerst?",
+        antwoorden: [
+          "Met uitwendige kieuwen",
+          "Met longen",
+          "Met vleugels",
+          "Met een roltong"
+        ],
+        goed: 0,
+        uitleg:
+          "In een vroege fase heeft het kikkervisje uitwendige kieuwen."
+      },
+      {
+        id: "kik03",
+        categorie: "Kikker",
+        soort: "Toepassing",
+        niveau: 2,
+        vraag: "Wat vervangt later de uitwendige kieuwen van een kikkervisje?",
+        antwoorden: [
+          "Inwendige kieuwen",
+          "Vleugels",
+          "Zaadlobben",
+          "Een cocon"
+        ],
+        goed: 0,
+        uitleg:
+          "Tijdens de ontwikkeling verdwijnen de uitwendige kieuwen en ontstaan inwendige kieuwen."
+      },
+      {
+        id: "kik04",
+        categorie: "Kikker",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Welke poten worden bij een kikkervisje het eerst zichtbaar?",
+        antwoorden: [
+          "De achterpoten",
+          "De voorpoten",
+          "Alle vier tegelijk",
+          "Er ontstaan geen poten"
+        ],
+        goed: 0,
+        uitleg:
+          "Eerst worden twee kleine achterpootjes zichtbaar."
+      },
+      {
+        id: "kik05",
+        categorie: "Kikker",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Wanneer beginnen de voorpoten zich volgens de leerstof ongeveer te ontwikkelen?",
+        antwoorden: [
+          "Na acht tot negen weken",
+          "Na één dag",
+          "Pas na twee jaar",
+          "Direct in het ei"
+        ],
+        goed: 0,
+        uitleg:
+          "Na ongeveer acht tot negen weken beginnen de voorpoten zich te ontwikkelen."
+      },
+      {
+        id: "kik06",
+        categorie: "Kikker",
+        soort: "Toepassing",
+        niveau: 1,
+        vraag: "Wat gebeurt er met de staart tijdens de metamorfose van een kikker?",
+        antwoorden: [
+          "De staart wordt korter en verdwijnt uiteindelijk",
+          "De staart wordt een vleugel",
+          "De staart wordt steeds langer",
+          "De staart verandert in een kieuw"
+        ],
+        goed: 0,
+        uitleg:
+          "Tijdens de metamorfose wordt de staart steeds korter."
+      },
+      {
+        id: "kik07",
+        categorie: "Kikker",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Hoe ziet het dier er na ongeveer twaalf tot dertien weken uit?",
+        antwoorden: [
+          "Als een klein kikkertje",
+          "Als een vlinder",
+          "Als een volwassen pinguïn",
+          "Als een zaad"
+        ],
+        goed: 0,
+        uitleg:
+          "Na twaalf tot dertien weken lijkt het dier al op een kikker, maar het is nog erg klein."
+      },
+      {
+        id: "kik08",
+        categorie: "Kikker",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Wat gaat het kleine kikkertje eten?",
+        antwoorden: [
+          "Insecten",
+          "Alleen koolbladeren",
+          "Reservevoedsel uit zaadlobben",
+          "Alleen water"
+        ],
+        goed: 0,
+        uitleg:
+          "Na de metamorfose gaat de jonge kikker insecten eten."
+      },
+      {
+        id: "kik09",
+        categorie: "Kikker",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Wat gebeurt er met de ademhalingsorganen wanneer het kikkervisje een kikker wordt?",
+        antwoorden: [
+          "Er ontwikkelen zich longen en de kieuwen verdwijnen",
+          "De longen verdwijnen en de kieuwen worden groter",
+          "Er ontstaan vleugels",
+          "Er ontstaan zaadlobben"
+        ],
+        goed: 0,
+        uitleg:
+          "Longen nemen de functie van de kieuwen over als de kikker op het land gaat leven."
+      },
+      {
+        id: "kik10",
+        categorie: "Kikker",
+        soort: "Begrip",
+        niveau: 1,
+        vraag: "Waarmee neemt een volwassen kikker zuurstof op uit de lucht?",
+        antwoorden: [
+          "Met de longen en de huid",
+          "Alleen met uitwendige kieuwen",
+          "Met vleugels",
+          "Met de staart"
+        ],
+        goed: 0,
+        uitleg:
+          "Een volwassen kikker gebruikt zowel longen als de huid voor gaswisseling."
+      },
+      {
+        id: "kik11",
+        categorie: "Kikker",
+        soort: "Toetsvraag",
+        niveau: 2,
+        vraag: "Waarom kan een volwassen kikker op het land leven?",
+        antwoorden: [
+          "Er zijn longen ontwikkeld en de kikker kan ook via de huid zuurstof opnemen",
+          "De kikker heeft nog alleen uitwendige kieuwen",
+          "De kikker krijgt vleugels",
+          "De kikker stopt met ademhalen"
+        ],
+        goed: 0,
+        uitleg:
+          "Longen en huidademhaling maken gaswisseling met lucht mogelijk."
+      },
+      {
+        id: "kik12",
+        categorie: "Kikker",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welke volgorde in de ontwikkeling van een kikker is juist?",
+        antwoorden: [
+          "Uitwendige kieuwen → inwendige kieuwen → achterpoten → voorpoten → longen",
+          "Longen → vleugels → uitwendige kieuwen → zaadlobben",
+          "Voorpoten → ei → rups → longen",
+          "Imago → pop → kikkervisje → ei"
+        ],
+        goed: 0,
+        uitleg:
+          "De ademhalingsorganen en ledematen veranderen stap voor stap tijdens de metamorfose."
+      },
+      {
+        id: "kik13",
+        categorie: "Kikker",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Waarom is de ontwikkeling van kikkervisje tot kikker een metamorfose?",
+        antwoorden: [
+          "De lichaamsbouw en leefwijze veranderen sterk",
+          "Het dier wordt alleen groter",
+          "Het dier neemt alleen voedsel op",
+          "Het dier blijft precies hetzelfde gebouwd"
+        ],
+        goed: 0,
+        uitleg:
+          "Kieuwen verdwijnen, longen en poten ontstaan, de staart verdwijnt en de leefomgeving verandert."
+      },
+      {
+        id: "kik14",
+        categorie: "Kikker",
+        soort: "Toetsvraag",
+        niveau: 3,
+        context:
+          "Een kikkervisje leeft in water. Een volwassen kikker kan ook op het land leven.",
+        vraag: "Welke verandering maakt dit vooral mogelijk?",
+        antwoorden: [
+          "De ontwikkeling van longen",
+          "Het ontstaan van een cocon",
+          "Het ontstaan van zaadlobben",
+          "Het verdwijnen van alle ademhalingsorganen"
+        ],
+        goed: 0,
+        uitleg:
+          "Met longen kan de kikker zuurstof uit lucht opnemen."
+      },
+      {
+        id: "kik15",
+        categorie: "Kikker",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welke verandering is groei en welke is ontwikkeling?",
+        antwoorden: [
+          "Langer worden is groei; longen krijgen is ontwikkeling",
+          "Longen krijgen is groei; langer worden is uitscheiding",
+          "Beide zijn alleen voortplanting",
+          "Beide zijn waarneming"
+        ],
+        goed: 0,
+        uitleg:
+          "Een toename van afmetingen is groei. Een verandering in lichaamsbouw is ontwikkeling."
+      },
 
-function geselecteerdeVragen(){
-  const categorie=document.getElementById("categorieKeuze").value;
-  const soort=document.getElementById("vraagSoort").value;
+      // ======================================================
+      // GEMENGDE TOETSVRAGEN
+      // ======================================================
+      {
+        id: "mix01",
+        categorie: "Levenskenmerken",
+        soort: "Toetsvraag",
+        niveau: 3,
+        context:
+          "Een rups eet, wordt groter, vervelt en verandert later in een vlinder.",
+        vraag: "Welke processen worden achtereenvolgens beschreven?",
+        antwoorden: [
+          "Voeden, groeien en ontwikkelen",
+          "Uitscheiden, waarnemen en voortplanten",
+          "Ademhalen, uitscheiden en kiemen",
+          "Bewegen, bestuiven en groeien"
+        ],
+        goed: 0,
+        uitleg:
+          "Eten is voeden, groter worden is groeien en de verandering tot vlinder is ontwikkeling."
+      },
+      {
+        id: "mix02",
+        categorie: "Groei en ontwikkeling",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Wat hebben de kieming van een boon en de metamorfose van een kikker gemeen?",
+        antwoorden: [
+          "Bij beide verandert de bouw tijdens de ontwikkeling",
+          "Bij beide ontstaat een cocon",
+          "Bij beide ontstaan vleugels",
+          "Bij beide verdwijnen zaadlobben door vervelling"
+        ],
+        goed: 0,
+        uitleg:
+          "Zowel een kiemplant als een kikker ondergaat veranderingen in bouw tijdens de ontwikkeling."
+      },
+      {
+        id: "mix03",
+        categorie: "Groei en ontwikkeling",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welke combinatie bevat alleen voorbeelden van ontwikkeling?",
+        antwoorden: [
+          "Een plant krijgt bloemen en een kikkervisje krijgt poten",
+          "Een rups wordt zwaarder en een plant wordt hoger",
+          "Een boon neemt water op en een mens ademt in",
+          "Een konijn eet en een kikker beweegt"
+        ],
+        goed: 0,
+        uitleg:
+          "Bloemen en poten zijn nieuwe lichaamsdelen en dus veranderingen van de bouw."
+      },
+      {
+        id: "mix04",
+        categorie: "Groei en ontwikkeling",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welke combinatie bevat alleen voorbeelden van groei?",
+        antwoorden: [
+          "Een pinguïnjong wordt zwaarder en een plant wordt hoger",
+          "Een rups krijgt vleugels en een kikker krijgt longen",
+          "Een zaad neemt water op en een konijn vlucht",
+          "Een vlinder legt eieren en een mens plast"
+        ],
+        goed: 0,
+        uitleg:
+          "Zwaarder en hoger worden zijn toenamen in massa en afmetingen."
+      },
+      {
+        id: "mix05",
+        categorie: "Levenskenmerken",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welke uitspraak is biologisch het meest juist?",
+        antwoorden: [
+          "Groei gaat over grootte; ontwikkeling gaat over veranderingen in bouw en mogelijkheden",
+          "Groei en ontwikkeling betekenen altijd precies hetzelfde",
+          "Alleen dieren ontwikkelen",
+          "Alleen planten groeien"
+        ],
+        goed: 0,
+        uitleg:
+          "Zowel planten als dieren groeien en ontwikkelen."
+      },
+      {
+        id: "mix06",
+        categorie: "Levenskenmerken",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welke gebeurtenis hoort niet bij reageren op de omgeving?",
+        antwoorden: [
+          "Een konijn krijgt jongen",
+          "Een konijn hoort gevaar",
+          "Een konijn rent naar zijn hol",
+          "Een plant groeit naar het licht"
+        ],
+        goed: 0,
+        uitleg:
+          "Jongen krijgen is voortplanting. De andere voorbeelden hebben met waarnemen of bewegen te maken."
+      },
+      {
+        id: "mix07",
+        categorie: "Zaad en kieming",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welk onderdeel en welke functie zijn verkeerd gekoppeld?",
+        antwoorden: [
+          "Navel – neemt water op",
+          "Zaadhuid – beschermt het zaad",
+          "Poortje – laat water binnen",
+          "Zaadlobben – bevatten reservevoedsel"
+        ],
+        goed: 0,
+        uitleg:
+          "De navel is de plaats waar het zaad vastzat. Het poortje is de plek voor snelle wateropname."
+      },
+      {
+        id: "mix08",
+        categorie: "Vlinder",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welk onderdeel hoort niet in de levenscyclus van een koolwitje?",
+        antwoorden: [
+          "Kikkervisje",
+          "Ei",
+          "Rups",
+          "Pop"
+        ],
+        goed: 0,
+        uitleg:
+          "Een kikkervisje is de larve van een kikker, niet van een vlinder."
+      },
+      {
+        id: "mix09",
+        categorie: "Kikker",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Welk onderdeel hoort niet bij de metamorfose van een kikker?",
+        antwoorden: [
+          "Cocon",
+          "Kieuwen",
+          "Longen",
+          "Achterpoten"
+        ],
+        goed: 0,
+        uitleg:
+          "Een kikker vormt geen cocon. Dat begrip hoort hier bij de ontwikkeling van een vlinder."
+      },
+      {
+        id: "mix10",
+        categorie: "Groei en ontwikkeling",
+        soort: "Toetsvraag",
+        niveau: 3,
+        vraag: "Wat hebben een vlinder en een kikker gemeen?",
+        antwoorden: [
+          "Beide ondergaan metamorfose",
+          "Beide vormen een cocon",
+          "Beide hebben als larve een rups",
+          "Beide ontwikkelen zaadlobben"
+        ],
+        goed: 0,
+        uitleg:
+          "Zowel vlinders als kikkers ondergaan een sterke verandering van lichaamsbouw en leefwijze."
+      }
+    ];
 
-  return alleVragen.filter(v=>{
-    const categorieGoed=
-      categorie==="Alles" ||
-      categorie==="Toetsvraag" && v.soort==="Toetsvraag" ||
-      v.categorie===categorie;
+    /*
+    ==========================================================
+    SPELVARIABELEN
+    ==========================================================
+    */
 
-    const soortGoed=
-      soort==="Alles" || v.soort===soort;
+    let quizVragen = [];
+    let huidigeIndex = 0;
+    let score = 0;
+    let munten = 0;
+    let levens = 3;
+    let onbeperkteLevens = false;
+    let goedAantal = 0;
+    let foutAantal = 0;
+    let beantwoord = false;
+    let timerId = null;
+    let resterendeTijd = 22;
+    let tijdPerVraag = 22;
+    let zichtbareAntwoorden = [];
+    let flitskaarten = [];
+    let huidigeFlits = 0;
+    let voorlezenAan = true;
+    let nederlandseStem = null;
+    let huidigeModus = "oefenen";
+    let quizUitFouten = false;
+    let categorieStatistieken = {};
 
-    return categorieGoed&&soortGoed;
-  });
-}
+    /*
+    ==========================================================
+    SPRAAK
+    ==========================================================
+    */
 
-function startQuiz(){
-  stopVoorlezen();
+    function spraakBeschikbaar() {
+      return (
+        "speechSynthesis" in window &&
+        "SpeechSynthesisUtterance" in window
+      );
+    }
 
-  const kandidaten=geselecteerdeVragen();
+    function laadStemmen() {
+      if (!spraakBeschikbaar()) return;
 
-  if(kandidaten.length===0){
-    alert("Er zijn geen vragen voor deze combinatie.");
-    return;
-  }
+      const stemmen = window.speechSynthesis.getVoices();
 
-  const aantal=Number(document.getElementById("aantalVragen").value);
-  const niveau=document.getElementById("moeilijkheid").value;
+      nederlandseStem =
+        stemmen.find(stem =>
+          stem.lang.toLowerCase() === "nl-nl"
+        ) ||
+        stemmen.find(stem =>
+          stem.lang.toLowerCase().startsWith("nl")
+        ) ||
+        null;
+    }
 
-  tijdPerVraag=
-    niveau==="rustig" ? 35 :
-    niveau==="snel" ? 12 : 22;
+    laadStemmen();
 
-  quizVragen=schud(kandidaten)
-    .slice(0,Math.min(aantal,kandidaten.length));
+    if (spraakBeschikbaar()) {
+      window.speechSynthesis.onvoiceschanged = laadStemmen;
+    } else {
+      voorlezenAan = false;
 
-  huidigeIndex=0;
-  score=0;
-  munten=0;
-  levens=3;
-  goedAantal=0;
-  foutAantal=0;
+      document.getElementById("voorleesKnop").textContent =
+        "🔇 Geen stem beschikbaar";
+    }
 
-  document.getElementById("spelerNaam").textContent=
-    document.getElementById("naam").value.trim()||"Speler";
+    function spreekUit(tekst, forceer = false) {
+      if ((!voorlezenAan && !forceer) || !tekst) return;
+      if (!spraakBeschikbaar()) return;
 
-  toonScherm("quizScherm");
-  laadVraag();
-}
+      window.speechSynthesis.cancel();
 
-function laadVraag(){
-  clearInterval(timerId);
-  stopVoorlezen();
-  beantwoord=false;
+      const uitspraak = new SpeechSynthesisUtterance(
+        tekst.replace(/<[^>]+>/g, " ")
+      );
 
-  const v=quizVragen[huidigeIndex];
+      uitspraak.lang = "nl-NL";
+      uitspraak.rate = 0.9;
+      uitspraak.pitch = 1;
+      uitspraak.volume = 1;
 
-  document.getElementById("vraagNummer").textContent=
-    `${huidigeIndex+1}/${quizVragen.length}`;
-  document.getElementById("score").textContent=score;
-  document.getElementById("munten").textContent=munten;
-  document.getElementById("levens").textContent=
-    "❤️".repeat(Math.max(0,levens))||"💔";
-  document.getElementById("categorie").textContent=
-    `${v.categorie} · ${v.soort}`;
-  document.getElementById("vraagTekst").textContent=v.vraag;
-  document.getElementById("voortgangBalk").style.width=
-    `${(huidigeIndex/quizVragen.length)*100}%`;
+      if (nederlandseStem) {
+        uitspraak.voice = nederlandseStem;
+      }
 
-  const feedback=document.getElementById("feedback");
-  feedback.className="feedback verborgen";
-  feedback.innerHTML="";
-  document.getElementById("volgendeKnop").classList.add("verborgen");
+      window.speechSynthesis.speak(uitspraak);
+    }
 
-  zichtbareAntwoorden=schud(
-    v.antwoorden.map((tekst,index)=>({tekst,origineleIndex:index}))
-  );
+    function stopVoorlezen() {
+      if (spraakBeschikbaar()) {
+        window.speechSynthesis.cancel();
+      }
+    }
 
-  const vak=document.getElementById("antwoorden");
-  vak.innerHTML="";
+    function wisselVoorlezen() {
+      if (!spraakBeschikbaar()) {
+        toonMelding("Deze browser ondersteunt geen voorlezen.");
+        return;
+      }
 
-  zichtbareAntwoorden.forEach((a,i)=>{
-    const knop=document.createElement("button");
-    knop.className="antwoord";
-    knop.dataset.index=a.origineleIndex;
-    knop.textContent=`${i+1}. ${a.tekst}`;
-    knop.onclick=()=>controleerAntwoord(a.origineleIndex,knop,v);
-    vak.appendChild(knop);
-  });
+      voorlezenAan = !voorlezenAan;
+      stopVoorlezen();
 
-  startTimer();
+      document.getElementById("voorleesKnop").textContent =
+        voorlezenAan
+          ? "🔊 Voorlezen: aan"
+          : "🔇 Voorlezen: uit";
 
-  if(
-    voorlezenAan &&
-    document.getElementById("automatischVoorlezen").value==="ja"
-  ){
-    setTimeout(leesZichtbareVraagVoor,250);
-  }
-}
+      if (voorlezenAan) {
+        spreekUit("Voorlezen staat aan.");
+      }
+    }
 
-function startTimer(){
-  resterendeTijd=tijdPerVraag;
-  const t=document.getElementById("timer");
-  t.textContent=resterendeTijd;
-  t.classList.remove("timer-gevaar");
+    function leesZichtbareVraagVoor() {
+      const vraag = quizVragen[huidigeIndex];
+      if (!vraag) return;
 
-  timerId=setInterval(()=>{
-    resterendeTijd--;
-    t.textContent=resterendeTijd;
-    if(resterendeTijd<=5)t.classList.add("timer-gevaar");
-    if(resterendeTijd<=0){
+      const context = vraag.context
+        ? `Situatie: ${vraag.context}. `
+        : "";
+
+      const antwoordTekst = zichtbareAntwoorden
+        .map((antwoord, index) =>
+          `Antwoord ${index + 1}: ${antwoord.tekst}.`
+        )
+        .join(" ");
+
+      spreekUit(
+        `${context}${vraag.vraag}. ${antwoordTekst}`,
+        true
+      );
+    }
+
+    /*
+    ==========================================================
+    OPSLAG
+    ==========================================================
+    */
+
+    function haalTopscoreOp() {
+      try {
+        return Number(localStorage.getItem("biobattle-topscore")) || 0;
+      } catch {
+        return 0;
+      }
+    }
+
+    function bewaarTopscore(nieuweScore) {
+      try {
+        localStorage.setItem(
+          "biobattle-topscore",
+          String(nieuweScore)
+        );
+      } catch {
+        console.warn("Topscore kon niet worden opgeslagen.");
+      }
+    }
+
+    function haalFoutIdsOp() {
+      try {
+        const opgeslagen =
+          JSON.parse(localStorage.getItem("biobattle-fouten") || "[]");
+
+        return Array.isArray(opgeslagen) ? opgeslagen : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function bewaarFoutId(id) {
+      try {
+        const foutIds = haalFoutIdsOp();
+
+        if (!foutIds.includes(id)) {
+          foutIds.push(id);
+        }
+
+        localStorage.setItem(
+          "biobattle-fouten",
+          JSON.stringify(foutIds)
+        );
+
+        updateFoutenInfo();
+      } catch {
+        console.warn("Fout kon niet worden opgeslagen.");
+      }
+    }
+
+    function verwijderFoutId(id) {
+      try {
+        const foutIds = haalFoutIdsOp()
+          .filter(foutId => foutId !== id);
+
+        localStorage.setItem(
+          "biobattle-fouten",
+          JSON.stringify(foutIds)
+        );
+
+        updateFoutenInfo();
+      } catch {
+        console.warn("Fout kon niet worden verwijderd.");
+      }
+    }
+
+    function wisFouten() {
+      const aantal = haalFoutIdsOp().length;
+
+      if (aantal === 0) {
+        toonMelding("Je foutenlijst is al leeg.");
+        return;
+      }
+
+      const zeker = confirm(
+        "Weet je zeker dat je alle opgeslagen fouten wilt wissen?"
+      );
+
+      if (!zeker) return;
+
+      try {
+        localStorage.removeItem("biobattle-fouten");
+      } catch {}
+
+      updateFoutenInfo();
+      toonMelding("Foutenlijst gewist.");
+    }
+
+    function updateFoutenInfo() {
+      const aantal = haalFoutIdsOp().length;
+
+      document.getElementById("foutenInfo").textContent =
+        aantal === 0
+          ? "Je hebt nog geen opgeslagen fouten."
+          : `Opgeslagen moeilijke vragen: ${aantal}`;
+    }
+
+    document.getElementById("topscore").textContent =
+      haalTopscoreOp();
+
+    updateFoutenInfo();
+
+    /*
+    ==========================================================
+    HULPFUNCTIES
+    ==========================================================
+    */
+
+    function schud(lijst) {
+      const kopie = [...lijst];
+
+      for (let i = kopie.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [kopie[i], kopie[j]] = [kopie[j], kopie[i]];
+      }
+
+      return kopie;
+    }
+
+    function toonScherm(id) {
+      [
+        "startScherm",
+        "quizScherm",
+        "eindScherm",
+        "flitsScherm"
+      ].forEach(schermId => {
+        document
+          .getElementById(schermId)
+          .classList.add("verborgen");
+      });
+
+      document.getElementById(id).classList.remove("verborgen");
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    function toonMelding(tekst) {
+      const melding = document.createElement("div");
+      melding.className = "melding";
+      melding.textContent = tekst;
+
+      document.body.appendChild(melding);
+
+      setTimeout(() => {
+        melding.remove();
+      }, 2000);
+    }
+
+    function niveauNaam(niveau) {
+      if (niveau === 1) return "Makkelijk";
+      if (niveau === 2) return "Gemiddeld";
+      return "Moeilijk";
+    }
+
+    function levensTekst() {
+      if (onbeperkteLevens) return "∞";
+      return "❤️".repeat(Math.max(0, levens)) || "💔";
+    }
+
+    function geselecteerdeVragen() {
+      const categorie =
+        document.getElementById("categorieKeuze").value;
+
+      const soort =
+        document.getElementById("vraagSoort").value;
+
+      const niveau =
+        document.getElementById("niveauKeuze").value;
+
+      return alleVragen.filter(vraag => {
+        const categorieGoed =
+          categorie === "Alles" ||
+          vraag.categorie === categorie;
+
+        const soortGoed =
+          soort === "Alles" ||
+          vraag.soort === soort;
+
+        const niveauGoed =
+          niveau === "Alles" ||
+          vraag.niveau === Number(niveau);
+
+        return categorieGoed && soortGoed && niveauGoed;
+      });
+    }
+
+    function initialiseerStatistieken(vragen) {
+      categorieStatistieken = {};
+
+      vragen.forEach(vraag => {
+        if (!categorieStatistieken[vraag.categorie]) {
+          categorieStatistieken[vraag.categorie] = {
+            goed: 0,
+            fout: 0
+          };
+        }
+      });
+    }
+
+    /*
+    ==========================================================
+    QUIZ
+    ==========================================================
+    */
+
+    function startQuiz() {
+      quizUitFouten = false;
+
+      const kandidaten = geselecteerdeVragen();
+
+      if (kandidaten.length === 0) {
+        alert(
+          "Er zijn geen vragen voor deze combinatie. Kies een ander onderwerp, niveau of vraagsoort."
+        );
+        return;
+      }
+
+      startQuizMetVragen(kandidaten);
+    }
+
+    function oefenFouten() {
+      const foutIds = haalFoutIdsOp();
+
+      const foutVragen = alleVragen.filter(vraag =>
+        foutIds.includes(vraag.id)
+      );
+
+      if (foutVragen.length === 0) {
+        toonMelding("Je hebt nog geen opgeslagen fouten.");
+        return;
+      }
+
+      quizUitFouten = true;
+      startQuizMetVragen(foutVragen, true);
+    }
+
+    function startQuizMetVragen(kandidaten, alleenFouten = false) {
+      stopVoorlezen();
+
+      huidigeModus =
+        document.getElementById("spelmodus").value;
+
+      const aantal =
+        Number(document.getElementById("aantalVragen").value);
+
+      tijdPerVraag =
+        Number(document.getElementById("tijdKeuze").value);
+
+      const gekozenLevens =
+        Number(document.getElementById("levensKeuze").value);
+
+      onbeperkteLevens = gekozenLevens === 999;
+      levens = gekozenLevens;
+
+      quizVragen = schud(kandidaten).slice(
+        0,
+        Math.min(aantal, kandidaten.length)
+      );
+
+      huidigeIndex = 0;
+      score = 0;
+      munten = 0;
+      goedAantal = 0;
+      foutAantal = 0;
+
+      initialiseerStatistieken(quizVragen);
+
+      document.getElementById("spelerNaam").textContent =
+        document.getElementById("naam").value.trim() || "Speler";
+
+      document.getElementById("modusTekst").textContent =
+        alleenFouten
+          ? "Fouten oefenen"
+          : huidigeModus === "toets"
+            ? "Toets"
+            : "Oefenen";
+
+      toonScherm("quizScherm");
+      laadVraag();
+    }
+
+    function laadVraag() {
       clearInterval(timerId);
-      tijdVoorbij();
+      stopVoorlezen();
+
+      beantwoord = false;
+
+      const vraag = quizVragen[huidigeIndex];
+
+      document.getElementById("vraagNummer").textContent =
+        `${huidigeIndex + 1}/${quizVragen.length}`;
+
+      document.getElementById("score").textContent = score;
+      document.getElementById("munten").textContent = munten;
+      document.getElementById("levens").textContent =
+        levensTekst();
+
+      document.getElementById("categorie").textContent =
+        `${vraag.categorie} · ${vraag.soort}`;
+
+      document.getElementById("niveauLabel").textContent =
+        niveauNaam(vraag.niveau);
+
+      document.getElementById("vraagTekst").textContent =
+        vraag.vraag;
+
+      const contextVak =
+        document.getElementById("contextTekst");
+
+      if (vraag.context) {
+        contextVak.textContent = vraag.context;
+        contextVak.classList.remove("verborgen");
+      } else {
+        contextVak.textContent = "";
+        contextVak.classList.add("verborgen");
+      }
+
+      document.getElementById("voortgangBalk").style.width =
+        `${(huidigeIndex / quizVragen.length) * 100}%`;
+
+      const feedback =
+        document.getElementById("feedback");
+
+      feedback.className = "feedback verborgen";
+      feedback.innerHTML = "";
+
+      document
+        .getElementById("volgendeKnop")
+        .classList.add("verborgen");
+
+      zichtbareAntwoorden = schud(
+        vraag.antwoorden.map((tekst, index) => ({
+          tekst,
+          origineleIndex: index
+        }))
+      );
+
+      const antwoordenVak =
+        document.getElementById("antwoorden");
+
+      antwoordenVak.innerHTML = "";
+
+      zichtbareAntwoorden.forEach((antwoord, index) => {
+        const knop = document.createElement("button");
+
+        knop.className = "antwoord";
+        knop.dataset.index = antwoord.origineleIndex;
+        knop.textContent =
+          `${index + 1}. ${antwoord.tekst}`;
+
+        knop.onclick = () => {
+          controleerAntwoord(
+            antwoord.origineleIndex,
+            knop,
+            vraag
+          );
+        };
+
+        antwoordenVak.appendChild(knop);
+      });
+
+      startTimer();
+
+      if (
+        voorlezenAan &&
+        document.getElementById("automatischVoorlezen").value === "ja"
+      ) {
+        setTimeout(leesZichtbareVraagVoor, 250);
+      }
     }
-  },1000);
-}
 
-function controleerAntwoord(index,knop,v){
-  if(beantwoord)return;
-  beantwoord=true;
-  clearInterval(timerId);
-  stopVoorlezen();
+    function startTimer() {
+      const timer =
+        document.getElementById("timer");
 
-  document.querySelectorAll(".antwoord")
-    .forEach(k=>k.disabled=true);
+      const secondeTekst =
+        document.getElementById("secondeTekst");
 
-  const goed=index===v.goed;
+      timer.classList.remove("timer-gevaar");
 
-  if(goed){
-    const punten=100+resterendeTijd*5;
-    const nieuweMunten=10+Math.ceil(resterendeTijd/2);
+      if (tijdPerVraag === 0) {
+        timer.textContent = "∞";
+        secondeTekst.textContent = " · ";
+        return;
+      }
 
-    score+=punten;
-    munten+=nieuweMunten;
-    goedAantal++;
-    knop.classList.add("goed");
+      resterendeTijd = tijdPerVraag;
+      timer.textContent = resterendeTijd;
+      secondeTekst.textContent = "s · ";
 
-    toonFeedback(true,`Goed! +${punten} punten. ${v.uitleg}`);
-    toonMelding(`+${punten} ⭐ +${nieuweMunten} 🪙`);
+      timerId = setInterval(() => {
+        resterendeTijd--;
+        timer.textContent = resterendeTijd;
 
-    spreekUit(`Goed. ${v.uitleg}`);
-  }else{
-    levens--;
-    foutAantal++;
-    knop.classList.add("fout");
-    markeerGoed(v);
+        if (resterendeTijd <= 5) {
+          timer.classList.add("timer-gevaar");
+        }
 
-    toonFeedback(
-      false,
-      `Het juiste antwoord is <strong>${v.antwoorden[v.goed]}</strong>. ${v.uitleg}`
-    );
-
-    spreekUit(
-      `Niet correct. Het juiste antwoord is ${v.antwoorden[v.goed]}. ${v.uitleg}`
-    );
-  }
-
-  werkStatusBij();
-  document.getElementById("volgendeKnop").classList.remove("verborgen");
-}
-
-function markeerGoed(v){
-  document.querySelectorAll(".antwoord").forEach(k=>{
-    if(Number(k.dataset.index)===v.goed)k.classList.add("goed");
-  });
-}
-
-function tijdVoorbij(){
-  if(beantwoord)return;
-  beantwoord=true;
-  levens--;
-  foutAantal++;
-
-  const v=quizVragen[huidigeIndex];
-
-  document.querySelectorAll(".antwoord")
-    .forEach(k=>k.disabled=true);
-
-  markeerGoed(v);
-
-  toonFeedback(
-    false,
-    `De tijd is voorbij. Het juiste antwoord is <strong>${v.antwoorden[v.goed]}</strong>. ${v.uitleg}`
-  );
-
-  spreekUit(
-    `De tijd is voorbij. Het juiste antwoord is ${v.antwoorden[v.goed]}. ${v.uitleg}`
-  );
-
-  werkStatusBij();
-  document.getElementById("volgendeKnop").classList.remove("verborgen");
-}
-
-function toonFeedback(goed,tekst){
-  const f=document.getElementById("feedback");
-  f.className=`feedback ${goed?"goed":"fout"}`;
-  f.innerHTML=`<strong>${goed?"✅ Correct":"❌ Niet correct"}</strong><br>${tekst}`;
-}
-
-function werkStatusBij(){
-  document.getElementById("score").textContent=score;
-  document.getElementById("munten").textContent=munten;
-  document.getElementById("levens").textContent=
-    "❤️".repeat(Math.max(0,levens))||"💔";
-}
-
-function volgendeVraag(){
-  stopVoorlezen();
-  huidigeIndex++;
-
-  if(huidigeIndex>=quizVragen.length||levens<=0){
-    eindigQuiz();
-  }else{
-    laadVraag();
-  }
-}
-
-function eindigQuiz(){
-  clearInterval(timerId);
-  stopVoorlezen();
-
-  const percentage=Math.round((goedAantal/quizVragen.length)*100);
-  let titel="Blijf oefenen!";
-  let icoon="🌱";
-
-  if(percentage>=50){titel="Goed gedaan!";icoon="⭐";}
-  if(percentage>=75){titel="Super gespeeld!";icoon="🏆";}
-  if(percentage===100){titel="Perfect!";icoon="👑";}
-  if(levens<=0){titel="Je levens zijn op";icoon="💔";}
-
-  document.getElementById("eindTitel").textContent=titel;
-  document.getElementById("eindIcoon").textContent=icoon;
-  document.getElementById("eindTekst").textContent=
-    `Je had ${percentage}% goed.`;
-  document.getElementById("eindScore").textContent=score;
-  document.getElementById("eindGoed").textContent=goedAantal;
-  document.getElementById("eindFout").textContent=foutAantal;
-  document.getElementById("eindMunten").textContent=munten;
-
-  if(score>haalTopscoreOp()){
-    bewaarTopscore(score);
-    document.getElementById("topscore").textContent=score;
-  }
-
-  toonScherm("eindScherm");
-  spreekUit(`${titel}. Je had ${percentage} procent goed.`);
-}
-
-/* =========================================================
-   FLITSKAARTEN
-   ========================================================= */
-
-function startFlitskaarten(){
-  stopVoorlezen();
-
-  let bron=geselecteerdeVragen();
-  if(bron.length===0)bron=alleVragen;
-
-  flitskaarten=schud(bron.map(v=>({
-    term:v.vraag,
-    uitleg:`${v.antwoorden[v.goed]}. ${v.uitleg}`
-  })));
-
-  huidigeFlits=0;
-  toonScherm("flitsScherm");
-  laadFlitskaart();
-}
-
-function laadFlitskaart(){
-  stopVoorlezen();
-
-  const k=flitskaarten[huidigeFlits];
-  document.getElementById("flitsBinnenkant")
-    .classList.remove("omgedraaid");
-  document.getElementById("flitsTerm").textContent=k.term;
-  document.getElementById("flitsUitleg").textContent=k.uitleg;
-  document.getElementById("flitsTeller").textContent=
-    `${huidigeFlits+1}/${flitskaarten.length}`;
-}
-
-function draaiFlitskaart(){
-  const binnen=document.getElementById("flitsBinnenkant");
-  binnen.classList.toggle("omgedraaid");
-
-  const k=flitskaarten[huidigeFlits];
-  spreekUit(
-    binnen.classList.contains("omgedraaid") ? k.uitleg : k.term
-  );
-}
-
-function leesFlitskaartVoor(){
-  const k=flitskaarten[huidigeFlits];
-  spreekUit(`${k.term}. ${k.uitleg}`,true);
-}
-
-function volgendeFlitskaart(){
-  huidigeFlits=(huidigeFlits+1)%flitskaarten.length;
-  laadFlitskaart();
-}
-
-function vorigeFlitskaart(){
-  huidigeFlits=(huidigeFlits-1+flitskaarten.length)%flitskaarten.length;
-  laadFlitskaart();
-}
-
-function naarStart(){
-  clearInterval(timerId);
-  stopVoorlezen();
-  toonScherm("startScherm");
-}
-
-/* TOETSENBORD */
-document.addEventListener("keydown",e=>{
-  if(!document.getElementById("quizScherm").classList.contains("verborgen")){
-    if(["1","2","3","4"].includes(e.key)&&!beantwoord){
-      const knoppen=document.querySelectorAll(".antwoord");
-      const i=Number(e.key)-1;
-      if(knoppen[i])knoppen[i].click();
+        if (resterendeTijd <= 0) {
+          clearInterval(timerId);
+          tijdVoorbij();
+        }
+      }, 1000);
     }
-    if(e.key==="Enter"&&beantwoord)volgendeVraag();
-  }
 
-  if(
-    !document.getElementById("flitsScherm").classList.contains("verborgen") &&
-    e.code==="Space"
-  ){
-    e.preventDefault();
-    draaiFlitskaart();
-  }
-});
+    function controleerAntwoord(index, knop, vraag) {
+      if (beantwoord) return;
 
-window.addEventListener("beforeunload",stopVoorlezen);
-</script>
+      beantwoord = true;
+      clearInterval(timerId);
+      stopVoorlezen();
+
+      document
+        .querySelectorAll(".antwoord")
+        .forEach(antwoordKnop => {
+          antwoordKnop.disabled = true;
+        });
+
+      const isGoed = index === vraag.goed;
+
+      if (isGoed) {
+        const tijdBonus =
+          tijdPerVraag === 0
+            ? 0
+            : resterendeTijd * 5;
+
+        const niveauBonus = vraag.niveau * 25;
+        const punten = 100 + tijdBonus + niveauBonus;
+        const nieuweMunten = 10 + vraag.niveau * 5;
+
+        score += punten;
+        munten += nieuweMunten;
+        goedAantal++;
+
+        categorieStatistieken[vraag.categorie].goed++;
+
+        knop.classList.add("goed");
+        verwijderFoutId(vraag.id);
+
+        if (huidigeModus === "oefenen" || quizUitFouten) {
+          toonFeedback(
+            true,
+            `Goed! +${punten} punten. ${vraag.uitleg}`
+          );
+
+          spreekUit(`Goed. ${vraag.uitleg}`);
+        } else {
+          toonFeedback(
+            true,
+            `Antwoord opgeslagen. +${punten} punten.`
+          );
+
+          spreekUit("Antwoord opgeslagen.");
+        }
+
+        toonMelding(
+          `+${punten} ⭐  +${nieuweMunten} 🪙`
+        );
+      } else {
+        if (!onbeperkteLevens) {
+          levens--;
+        }
+
+        foutAantal++;
+        categorieStatistieken[vraag.categorie].fout++;
+        knop.classList.add("fout");
+        markeerGoed(vraag);
+        bewaarFoutId(vraag.id);
+
+        const juist =
+          vraag.antwoorden[vraag.goed];
+
+        if (huidigeModus === "oefenen" || quizUitFouten) {
+          toonFeedback(
+            false,
+            `Het juiste antwoord is <strong>${juist}</strong>. ${vraag.uitleg}`
+          );
+
+          spreekUit(
+            `Niet correct. Het juiste antwoord is ${juist}. ${vraag.uitleg}`
+          );
+        } else {
+          toonFeedback(
+            false,
+            "Antwoord opgeslagen. De uitleg zie je na de toets."
+          );
+
+          spreekUit("Antwoord opgeslagen.");
+        }
+      }
+
+      werkStatusBij();
+
+      document
+        .getElementById("volgendeKnop")
+        .classList.remove("verborgen");
+    }
+
+    function markeerGoed(vraag) {
+      document
+        .querySelectorAll(".antwoord")
+        .forEach(knop => {
+          if (
+            Number(knop.dataset.index) === vraag.goed
+          ) {
+            knop.classList.add("goed");
+          }
+        });
+    }
+
+    function tijdVoorbij() {
+      if (beantwoord) return;
+
+      beantwoord = true;
+
+      if (!onbeperkteLevens) {
+        levens--;
+      }
+
+      foutAantal++;
+
+      const vraag = quizVragen[huidigeIndex];
+
+      categorieStatistieken[vraag.categorie].fout++;
+      bewaarFoutId(vraag.id);
+
+      document
+        .querySelectorAll(".antwoord")
+        .forEach(knop => {
+          knop.disabled = true;
+        });
+
+      markeerGoed(vraag);
+
+      const juist =
+        vraag.antwoorden[vraag.goed];
+
+      if (huidigeModus === "oefenen" || quizUitFouten) {
+        toonFeedback(
+          false,
+          `De tijd is voorbij. Het juiste antwoord is <strong>${juist}</strong>. ${vraag.uitleg}`
+        );
+
+        spreekUit(
+          `De tijd is voorbij. Het juiste antwoord is ${juist}. ${vraag.uitleg}`
+        );
+      } else {
+        toonFeedback(
+          false,
+          "De tijd is voorbij. De uitleg zie je na de toets."
+        );
+
+        spreekUit("De tijd is voorbij.");
+      }
+
+      werkStatusBij();
+
+      document
+        .getElementById("volgendeKnop")
+        .classList.remove("verborgen");
+    }
+
+    function toonFeedback(isGoed, tekst) {
+      const feedback =
+        document.getElementById("feedback");
+
+      feedback.className =
+        `feedback ${isGoed ? "goed" : "fout"}`;
+
+      feedback.innerHTML =
+        `<strong>${isGoed ? "✅ Correct" : "❌ Niet correct"}</strong><br>${tekst}`;
+    }
+
+    function werkStatusBij() {
+      document.getElementById("score").textContent =
+        score;
+
+      document.getElementById("munten").textContent =
+        munten;
+
+      document.getElementById("levens").textContent =
+        levensTekst();
+    }
+
+    function volgendeVraag() {
+      stopVoorlezen();
+      huidigeIndex++;
+
+      const levensOp =
+        !onbeperkteLevens && levens <= 0;
+
+      if (
+        huidigeIndex >= quizVragen.length ||
+        levensOp
+      ) {
+        eindigQuiz();
+      } else {
+        laadVraag();
+      }
+    }
+
+    function eindigQuiz() {
+      clearInterval(timerId);
+      stopVoorlezen();
+
+      const gespeeld = goedAantal + foutAantal;
+
+      const percentage =
+        gespeeld === 0
+          ? 0
+          : Math.round(
+              (goedAantal / gespeeld) * 100
+            );
+
+      let titel = "Blijf oefenen!";
+      let icoon = "🌱";
+
+      if (percentage >= 50) {
+        titel = "Goed gedaan!";
+        icoon = "⭐";
+      }
+
+      if (percentage >= 75) {
+        titel = "Super gespeeld!";
+        icoon = "🏆";
+      }
+
+      if (percentage >= 90) {
+        titel = "Uitstekend!";
+        icoon = "🥇";
+      }
+
+      if (percentage === 100) {
+        titel = "Perfect!";
+        icoon = "👑";
+      }
+
+      if (
+        !onbeperkteLevens &&
+        levens <= 0
+      ) {
+        titel = "Je levens zijn op";
+        icoon = "💔";
+      }
+
+      document.getElementById("eindTitel").textContent =
+        titel;
+
+      document.getElementById("eindIcoon").textContent =
+        icoon;
+
+      document.getElementById("eindTekst").textContent =
+        `Je had ${percentage}% van de beantwoorde vragen goed.`;
+
+      document.getElementById("eindScore").textContent =
+        score;
+
+      document.getElementById("eindGoed").textContent =
+        goedAantal;
+
+      document.getElementById("eindFout").textContent =
+        foutAantal;
+
+      document.getElementById("eindMunten").textContent =
+        munten;
+
+      document.getElementById("eindPercentage").textContent =
+        `${percentage}%`;
+
+      toonCategorieResultaten();
+
+      if (score > haalTopscoreOp()) {
+        bewaarTopscore(score);
+
+        document.getElementById("topscore").textContent =
+          score;
+
+        toonMelding("Nieuwe topscore! 🏆");
+      }
+
+      toonScherm("eindScherm");
+
+      spreekUit(
+        `${titel}. Je had ${percentage} procent goed en behaalde ${score} punten.`
+      );
+
+      updateFoutenInfo();
+    }
+
+    function toonCategorieResultaten() {
+      const vak =
+        document.getElementById("categorieResultaten");
+
+      vak.innerHTML = "<h3>Resultaat per onderwerp</h3>";
+
+      Object.entries(categorieStatistieken)
+        .filter(([, gegevens]) =>
+          gegevens.goed + gegevens.fout > 0
+        )
+        .forEach(([categorie, gegevens]) => {
+          const totaal =
+            gegevens.goed + gegevens.fout;
+
+          const percentage =
+            Math.round(
+              (gegevens.goed / totaal) * 100
+            );
+
+          const regel =
+            document.createElement("div");
+
+          regel.className = "resultaat-regel";
+
+          regel.innerHTML =
+            `<span>${categorie}</span>` +
+            `<strong>${gegevens.goed}/${totaal} · ${percentage}%</strong>`;
+
+          vak.appendChild(regel);
+        });
+    }
+
+    /*
+    ==========================================================
+    FLITSKAARTEN
+    ==========================================================
+    */
+
+    function startFlitskaarten() {
+      stopVoorlezen();
+
+      let bron = geselecteerdeVragen();
+
+      if (bron.length === 0) {
+        bron = alleVragen;
+      }
+
+      flitskaarten = schud(
+        bron.map(vraag => ({
+          categorie: vraag.categorie,
+          term: vraag.vraag,
+          uitleg:
+            `${vraag.antwoorden[vraag.goed]}. ${vraag.uitleg}`
+        }))
+      );
+
+      huidigeFlits = 0;
+
+      toonScherm("flitsScherm");
+      laadFlitskaart();
+    }
+
+    function laadFlitskaart() {
+      stopVoorlezen();
+
+      const kaart =
+        flitskaarten[huidigeFlits];
+
+      document
+        .getElementById("flitsBinnenkant")
+        .classList.remove("omgedraaid");
+
+      document.getElementById("flitsCategorie").textContent =
+        kaart.categorie;
+
+      document.getElementById("flitsTerm").textContent =
+        kaart.term;
+
+      document.getElementById("flitsUitleg").textContent =
+        kaart.uitleg;
+
+      document.getElementById("flitsTeller").textContent =
+        `${huidigeFlits + 1}/${flitskaarten.length}`;
+    }
+
+    function draaiFlitskaart() {
+      const binnenkant =
+        document.getElementById("flitsBinnenkant");
+
+      binnenkant.classList.toggle("omgedraaid");
+
+      const kaart =
+        flitskaarten[huidigeFlits];
+
+      if (
+        binnenkant.classList.contains("omgedraaid")
+      ) {
+        spreekUit(kaart.uitleg);
+      } else {
+        spreekUit(kaart.term);
+      }
+    }
+
+    function leesFlitskaartVoor() {
+      const kaart =
+        flitskaarten[huidigeFlits];
+
+      spreekUit(
+        `${kaart.term}. ${kaart.uitleg}`,
+        true
+      );
+    }
+
+    function volgendeFlitskaart() {
+      huidigeFlits =
+        (huidigeFlits + 1) % flitskaarten.length;
+
+      laadFlitskaart();
+    }
+
+    function vorigeFlitskaart() {
+      huidigeFlits =
+        (
+          huidigeFlits -
+          1 +
+          flitskaarten.length
+        ) % flitskaarten.length;
+
+      laadFlitskaart();
+    }
+
+    function schudFlitskaarten() {
+      flitskaarten = schud(flitskaarten);
+      huidigeFlits = 0;
+      laadFlitskaart();
+      toonMelding("Flitskaarten geschud.");
+    }
+
+    function naarStart() {
+      clearInterval(timerId);
+      stopVoorlezen();
+      updateFoutenInfo();
+      toonScherm("startScherm");
+    }
+
+    /*
+    ==========================================================
+    TOETSENBORD
+    ==========================================================
+    1-4: antwoord kiezen
+    Enter: volgende vraag
+    Spatie: flitskaart omdraaien
+    Pijl links/rechts: vorige/volgende flitskaart
+    */
+
+    document.addEventListener("keydown", gebeurtenis => {
+      const quizZichtbaar =
+        !document
+          .getElementById("quizScherm")
+          .classList.contains("verborgen");
+
+      const flitsZichtbaar =
+        !document
+          .getElementById("flitsScherm")
+          .classList.contains("verborgen");
+
+      if (quizZichtbaar) {
+        if (
+          ["1", "2", "3", "4"].includes(gebeurtenis.key) &&
+          !beantwoord
+        ) {
+          const knoppen =
+            document.querySelectorAll(".antwoord");
+
+          const index =
+            Number(gebeurtenis.key) - 1;
+
+          if (knoppen[index]) {
+            knoppen[index].click();
+          }
+        }
+
+        if (
+          gebeurtenis.key === "Enter" &&
+          beantwoord
+        ) {
+          volgendeVraag();
+        }
+      }
+
+      if (flitsZichtbaar) {
+        if (gebeurtenis.code === "Space") {
+          gebeurtenis.preventDefault();
+          draaiFlitskaart();
+        }
+
+        if (gebeurtenis.key === "ArrowRight") {
+          volgendeFlitskaart();
+        }
+
+        if (gebeurtenis.key === "ArrowLeft") {
+          vorigeFlitskaart();
+        }
+      }
+    });
+
+    window.addEventListener(
+      "beforeunload",
+      stopVoorlezen
+    );
+  </script>
 </body>
 </html>
